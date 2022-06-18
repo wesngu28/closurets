@@ -8,8 +8,11 @@ dotenv.config();
 databaseConnect();
 const client = new Closure;
 
-eventHandler(client);
-commandHandler(client);
-deployCommands(client);
+async function buildClient(client: Closure) {
+  await eventHandler(client);
+  await commandHandler(client);
+  await deployCommands(client);
+  client.login(process.env.TOKEN);
+}
 
-client.login(process.env.TOKEN);
+buildClient(client);
