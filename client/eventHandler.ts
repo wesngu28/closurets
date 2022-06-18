@@ -10,8 +10,8 @@ export async function eventHandler (client: Closure) : Promise<void> {
     const event = require(filePath);
     const name = Object.keys(event)[0];
     const func: Function = Object.values(event)[0] as Function;
-    if (event.once) {
-      client.once(name, async(...args) => await func(...args));
+    if(name === 'interactionCreate') {
+      client.on(name, async(interaction: any) => await func(client, interaction));
     } else {
       client.on(name, async(...args) => await func(...args));
     }
