@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Interaction } from "discord.js";
+import fetch from 'node-fetch';
 
 export const E2 = {
 	data: new SlashCommandBuilder()

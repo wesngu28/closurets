@@ -15,8 +15,7 @@ export async function commandHandler (client: Closure) : Promise<void> {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
     const commandName = Object.keys(command)[0];
-    console.log(command.commandName);
-    client.commands.set(command.commandName.data.name, command);
+    client.commands.set(command[commandName].data.name, command);
   }
 }
 
@@ -28,10 +27,9 @@ export async function deployCommands (client: Closure) : Promise<void> {
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
-    commands.push(command.data.toJSON());
+    const commandName = Object.keys(command)[0];
+    commands.push(command[commandName].data.toJSON());
   }
-
-  console.log(process.env.TOKEN);
 
   const rest = new REST({ version: '9' }).setToken(process.env.TOKEN!);
 
