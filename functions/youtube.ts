@@ -52,26 +52,29 @@ export async function fetchLiveStream(channelID: string): Promise<void | Announc
 }
 
 export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmbed> => {
-  let videoInfo = await fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${videoID.replace('yt:video:', '')}&key=${process.env.YTAPI}`);
-  const videoJson = await videoInfo.json();
-  let channelInfo = await fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${videoJson.items[0].snippet.channelId}&key=${process.env.YTAPI}`);
-  const channelJson = await channelInfo.json();
-  const embed = new MessageEmbed()
-    .setColor("#0099ff")
-    .setTitle(videoJson.title)
-    .setURL(`https://www.youtube.com/watch?v=${videoID}`)
+  let id = videoID;
+  id = id.replace('yt:video:', '');
+  let videoInfo = await fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${process.env.YTAPI}`);
+  const videoInfojson = await videoInfo.json();
+  const videoInformation = videoInfojson.items[0].snippet;
+  let channelPFP = await fetch(`https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${videoInfojson.items[0].snippet.channelId}&key=${process.env.YTAPI}`);
+  const channelInfo = await channelPFP.json();
+  const announcementEmbed = new MessageEmbed()
+    .setColor('#0099ff')
+    .setTitle(videoInformation.title)
+    .setURL('https://www.youtube.com/watch?v=' + id)
     .setAuthor({
-      name: videoJson.channelTitle,
-      iconURL: channelJson.items[0].snippet.thumbnails.default.url,
-      url: `https://www.youtube.com/channel/${channelJson.items[0].id}`,
+      name: videoInformation.channelTitle,
+      iconURL: channelInfo.items[0].snippet.thumbnails.default.url,
+      url: `https://www.youtube.com/channel/${channelInfo.items[0].id}`
     })
-    .setDescription(videoJson.description.slice(0, 200))
-    .setThumbnail(channelJson.items[0].snippet.thumbnails.high.url)
-    .setImage(videoJson.thumbnails.high.url)
+    .setDescription(videoInformation.description.slice(0, 200))
+    .setThumbnail(channelInfo.items[0].snippet.thumbnails.high.url)
+    .setImage(videoInformation.thumbnails.high.url)
     .setTimestamp();
   return {
-    content: `${videoJson.channelTitle} is live at https://www.youtube.com/watch?v=${videoID}`,
-    embeds: [embed]
+    content: `${videoInformation.channelTitle} is live at https://www.youtube.com/watch?v=${videoID}`,
+    embeds: [announcementEmbed]
   };
 }
 
@@ -108,8 +111,6 @@ async function infoStringExamine(url: string) {
     headless: true,
     args: ['--no-sandbox','--disable-setuid-sandbox']
   });
-
-  //Visit the page and wait for info strings.
   const page = await browser.newPage();
   await page.setViewport({ width: 1920, height: 1080});
   await page.goto(url);
