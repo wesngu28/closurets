@@ -3,12 +3,12 @@ import { Closure } from "../client/Closure";
 import { AnnouncementEmbed, fetchLiveStream } from "../functions/youtube";
 import config from '../config/config.json';
 
-export const ready = async(BOT: Closure) => {
-  console.log(`Bot ${BOT.user?.tag} is logged in!`);
+export const ready = async(client: Closure) => {
+  console.log(`Bot ${client.user?.tag} is logged in!`);
   let channel: AnyChannel | null;
   try {
     if(config.track_channel.channel !== '') {
-      channel = await BOT.channels.fetch(config.track_channel.channel);
+      channel = await client.channels.fetch(config.track_channel.channel);
       const channelID = config.track_channel.id;
       if(channel && channelID) {
         setInterval(() => {
