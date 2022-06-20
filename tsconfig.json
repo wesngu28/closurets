@@ -8,5 +8,6 @@
     "skipLibCheck": true,
     "watch": true,
     "resolveJsonModule": true,
+    "lib": ["ES2021", "dom"],
   }
 }
