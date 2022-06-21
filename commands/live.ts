@@ -1,7 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Interaction } from "discord.js";
-import mongoose from "mongoose";
-mongoose.connect('mongodb://localhost/testdb');
 import parse from "node-html-parser";
 import puppeteer from "puppeteer";
 import fetch from "node-fetch";
