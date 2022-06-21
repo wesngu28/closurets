@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed, MessageButton, MessageActionRow, Interaction, ButtonInteraction, Message } from "discord.js";
 import fetch from 'node-fetch';
-import { Operator } from "../models/Operator";
+import { Operator } from "../types/Operator";
 
 type art = {
   image: string;
@@ -23,7 +23,7 @@ export const operator = {
           let buttons = assembleButtons(imgList);
           const embed = formulate_response(data);
           const timeout = 120000;
-          slashpaginator(interaction, embed, buttons, imgList, timeout)
+          await skinPaginator(interaction, embed, buttons, imgList, timeout)
         }
       } catch (error) {
         if(interaction.isCommand()) {
@@ -36,7 +36,7 @@ export const operator = {
 const getOperatorData = async(operator: string) => {
   operator = operator.replace(' ', '-');
   const response = await fetch(`http://localhost:5219/api/rhodes/operator/${operator}`);
-  const json = await response.json();
+  const json: Operator = await response.json();
   return json;
 }
 
@@ -96,26 +96,27 @@ function formulate_response(operator: Operator) {
   return operatorEmbed;
 }
 
-async function slashpaginator(interact: Interaction, embed: MessageEmbed, buttons: MessageButton[], imgList: Array<art>, timeout = 120000) {
+async function skinPaginator(interact: Interaction, embed: MessageEmbed, buttons: MessageButton[], imgList: Array<art>, timeout = 120000) {
   const row = new MessageActionRow().addComponents(buttons);
   if(interact.isCommand()) {
-    let message = await interact.channel!.send(({
+    await interact.deferReply();
+    let int = await interact.editReply(({
       embeds: [embed],
       components: [row],
-    }));
+    })) as Message<boolean>;
     const filter = (i: Interaction) => i.user.id === interact.user.id;
-    const collector = message.createMessageComponentCollector({
+    const collector = int.createMessageComponentCollector({
       filter,
       time: timeout,
     });
     collector.on("collect", async (button: ButtonInteraction) => {
-      await button.deferUpdate()
+      await button.deferUpdate();
       await button.editReply({
         embeds: [embed.setImage('https://gamepress.gg/' + imgList[Number(button.customId)].image)],
         components: [row],
       });
       collector.resetTimer();
     });
-    return message;
+    return int;
   }
 }
