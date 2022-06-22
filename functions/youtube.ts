@@ -3,7 +3,8 @@ import Parser from 'rss-parser';
 import { parse } from 'node-html-parser';
 import puppeteer from 'puppeteer';
 import fetch from 'node-fetch';
-import Video from '../models/Video';
+import { Video, VideoSchema } from '../models/Video';
+import mongoose from 'mongoose';
 let parser = new Parser();
 
 export type AnnouncementEmbed = {
@@ -11,25 +12,26 @@ export type AnnouncementEmbed = {
   embeds: MessageEmbed[];
 }
 
-export async function fetchLiveStream(channelID: string): Promise<void | AnnouncementEmbed> {
+export async function fetchLiveStream(guildID: string, channelID: string): Promise<void | AnnouncementEmbed> {
   try {
-    await Video.deleteMany( { authorID: { "$ne": channelID}});
+    let guildDB = mongoose.model(`${guildID}`, VideoSchema);
+    await guildDB.deleteMany( { authorID: { "$ne": channelID}});
     const feed = await parser.parseURL(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelID}`);
-    const addFeed = await Video.find();
+    const addFeed = await guildDB.find();
     if(addFeed.length === 0) {
       const videos = feed.items;
       videos.forEach(async(video) => {
         video.authorID = channelID;
         video.announced = false;
-        await Video.create(video);
+        await guildDB.create(video);
       })
-    }
-    const announceableStream = await queryLiveStream(channelID);
-    if(announceableStream) {
-      return announceableStream;
+      const announceableStream = await queryLiveStream(guildDB, channelID);
+      if(announceableStream) {
+        return announceableStream;
+      }
     }
     if(addFeed.length > 0) {
-      const checkLatestVideo = await Video.findOne({ title: feed.items[0].title });
+      const checkLatestVideo = await guildDB.findOne({ title: feed.items[0].title });
       if(checkLatestVideo === null) {
         const latestVideo = feed.items[0];
         const announceableStream = await makeAnnouncement(latestVideo.id);
@@ -73,12 +75,12 @@ export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmb
     .setImage(videoInformation.thumbnails.high.url)
     .setTimestamp();
   return {
-    content: `${videoInformation.channelTitle} is live at https://www.youtube.com/watch?v=${videoID}`,
+    content: `${videoInformation.channelTitle} is live at https://www.youtube.com/watch?v=${id}`,
     embeds: [announcementEmbed]
   };
 }
 
-const queryLiveStream = async (channelID: string) : Promise<void | AnnouncementEmbed> => {
+const queryLiveStream = async (db: mongoose.Model<Video, {}, {}, {}>, channelID: string) : Promise<void | AnnouncementEmbed> => {
   const response = await fetch(`https://youtube.com/channel/${channelID}/live`);
   const text = await response.text();
   const html = parse(text);
@@ -89,7 +91,7 @@ const queryLiveStream = async (channelID: string) : Promise<void | AnnouncementE
     const ytInfoString = await infoStringExamine(canonicalURL!);
     if(ytInfoString?.includes('Started')) {
       resultLink = canonicalURL!;
-      const stream = await Video.findOne({
+      const stream = await db.findOne({
         link: resultLink
       })
       if(stream && stream.announced === false) {
