@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-interface Video {
+export interface Video {
   title: String;
   link: String;
   pubDate: String;
@@ -13,7 +13,7 @@ interface Video {
 }
 
 
-const VideoSchema = new mongoose.Schema<Video>({
+export const VideoSchema = new mongoose.Schema<Video>({
   title: String,
   link: String,
   pubDate: String,
@@ -25,4 +25,4 @@ const VideoSchema = new mongoose.Schema<Video>({
   announced: Boolean
 })
 
-export default mongoose.model<Video>('Video', VideoSchema);
+// export default mongoose.model<Video>('Video', VideoSchema);
