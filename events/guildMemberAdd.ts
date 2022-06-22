@@ -1,33 +1,27 @@
-import { MessageEmbed, GuildMember, TextChannel, WelcomeChannel } from 'discord.js';
-import config from '../config/config.json';
+import { MessageEmbed, GuildMember, Channel } from 'discord.js';
+import Welcome from '../models/Welcome';
 
 export const guildMemberAdd = async(member: GuildMember) => {
-  let welcomeImage = config.guild.welcome_img!;
-  if(welcomeImage === '') {
-    welcomeImage = config.default.welcome_img;
-  }
-  const welcomeEmbed = new MessageEmbed()
-    .setColor('#0099ff')
-    .setTitle('Welcome')
-    .setAuthor({
-      name: member.guild.name,
-      iconURL: member.guild.iconURL()!,
-      url: `https://discord.com/channels/${member.guild.id}`
-    })
-    .setDescription(`Hello ${member.user.toString()}, welcome to ${member.guild.name}`)
-    .setThumbnail(member.user.avatarURL()!)
-    .setImage(welcomeImage)
-    .setTimestamp();
-  let welcome: string = '';
-  if (config.guild.welcome_channel) {
-    welcome = config.guild.welcome_channel;
-  } else {
-    welcome = config.default.welcome_channel;
-  }
-  const welcomeChannel = member.guild.channels.cache.get(welcome)!;
-  if(welcomeChannel?.isText()) {
-    welcomeChannel.send({
-      embeds: [welcomeEmbed]
-      });
+  const guilded = await Welcome.findOne(({ _id: member.guild.id }));
+  if(guilded !== null) {
+    const welcomeImage = guilded!.image
+    const welcomeEmbed = new MessageEmbed()
+      .setColor('#0099ff')
+      .setTitle('Welcome')
+      .setAuthor({
+        name: member.guild.name,
+        iconURL: member.guild.iconURL()!,
+        url: `https://discord.com/channels/${member.guild.id}`
+      })
+      .setDescription(`Hello ${member.user.toString()}, welcome to ${member.guild.name}`)
+      .setThumbnail(member.user.avatarURL()!)
+      .setImage(welcomeImage!)
+      .setTimestamp();
+    const channel = member.guild.channels.cache.get(guilded!.channelID);
+    if(channel?.isText()) {
+      channel?.send({
+        embeds: [welcomeEmbed]
+        })
+    }
   }
 }

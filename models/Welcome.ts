@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 interface Welcome {
   _id: string;
   channelID: string;
-  image?: string;
+  image: string;
 }
 
 const required = {
