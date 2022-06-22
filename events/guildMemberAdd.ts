@@ -1,4 +1,4 @@
-import { MessageEmbed, GuildMember, Channel } from 'discord.js';
+import { MessageEmbed, GuildMember } from 'discord.js';
 import Welcome from '../models/Welcome';
 
 export const guildMemberAdd = async(member: GuildMember) => {
