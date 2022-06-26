@@ -3,11 +3,6 @@ import { MessageEmbed, MessageButton, MessageActionRow, Interaction, ButtonInter
 import fetch from 'node-fetch';
 import { Operator } from "../types/Operator";
 
-type art = {
-  image: string;
-  name: string;
-}
-
 export const operator = {
 	data: new SlashCommandBuilder()
 		.setName('operator')
@@ -19,7 +14,7 @@ export const operator = {
           let name = interaction.options.getString('name');
           name = name!.replaceAll(' ', '-');
           const data = await getOperatorData(name);
-          const imgList: Array<art> = data['art'];
+          const imgList: {[key: string]: string} = data['art'];
           let buttons = assembleButtons(imgList);
           const embed = formulate_response(data);
           const timeout = 120000;
@@ -35,17 +30,18 @@ export const operator = {
 
 const getOperatorData = async(operator: string) => {
   operator = operator.replace(' ', '-');
-  const response = await fetch(`http://localhost:5219/api/rhodes/operator/${operator}`);
+  const response = await fetch(`https://rhodesapi.herokuapp.com/api/rhodes/operator/${operator}`);
   const json: Operator = await response.json();
   return json;
 }
 
-function assembleButtons(imgList: Array<art>){
+function assembleButtons(imgList: {[key: string]: string}){
   const buttons = [];
-  for (let i = 0; i < imgList.length; i++){
+  const skinNames = Object.keys(imgList);
+  for (let i = 0; i < skinNames.length; i++){
     buttons.push(new MessageButton()
       .setCustomId('' + i)
-      .setLabel(imgList[i].name)
+      .setLabel(skinNames[i])
       .setStyle('SECONDARY'));
   }
   return buttons;
@@ -90,13 +86,13 @@ function formulate_response(operator: Operator) {
         inline: true
       })
       .addField('Quote', operator.quote)
-      .setImage('https://gamepress.gg/' + operator.art[0].image)
+      .setImage(operator.art.Base)
       .setTimestamp()
     ;
   return operatorEmbed;
 }
 
-async function skinPaginator(interact: Interaction, embed: MessageEmbed, buttons: MessageButton[], imgList: Array<art>, timeout = 120000) {
+async function skinPaginator(interact: Interaction, embed: MessageEmbed, buttons: MessageButton[], imgList: {[key: string]: string}, timeout = 120000) {
   const row = new MessageActionRow().addComponents(buttons);
   if(interact.isCommand()) {
     await interact.deferReply();
@@ -112,7 +108,7 @@ async function skinPaginator(interact: Interaction, embed: MessageEmbed, buttons
     collector.on("collect", async (button: ButtonInteraction) => {
       await button.deferUpdate();
       await button.editReply({
-        embeds: [embed.setImage('https://gamepress.gg/' + imgList[Number(button.customId)].image)],
+        embeds: [embed.setImage(imgList[Object.keys(imgList)[Number(button.customId)]])],
         components: [row],
       });
       collector.resetTimer();

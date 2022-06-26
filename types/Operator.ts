@@ -1,4 +1,3 @@
-
 type stats = {
   hp: string;
   atk: string;
@@ -8,27 +7,6 @@ type stats = {
   cost: string;
   block: string;
   interval: string;
-}
-
-type lore = {
-  Gender: string;
-  'Place of Birth': string;
-  Birthday: string;
-  Race: string;
-  Height: string;
-  'Combat Experience': string;
-  'Infection Status': string;
-  'Physical Strength': string;
-  Mobility: String;
-  'Physiological Endurance': string;
-  'Tactical Planning': string;
-  'Combat Skill': string;
-  "Originium Adaptability": string;
-}
-
-type opDict = {
-  name: string;
-  value: string;
 }
 
 type skill = {
@@ -46,7 +24,7 @@ type module = {
   trust: string;
   availability: string;
   trait: string;
-  missions: string;
+  missions: string[];
 }
 
 type base = {
@@ -56,15 +34,10 @@ type base = {
   building: string;
 }
 
-type art = {
-  image: string;
-  name: string;
-}
-
 export interface Operator {
+  _id: string;
   name: string;
-  urlName: string;
-  rarity: string;
+  rarity: number;
   alter: string;
   artist: string;
   va: string;
@@ -72,23 +45,23 @@ export interface Operator {
   description: string;
   quote: string;
   voicelines: { [key: string]: string };
-  lore: lore;
-  affiliation: Array<String>;
-  class: Array<String>;
-  tags: Array<String>;
-  statistics: Array<{[key: string]: stats}>;
+  lore: { [key: string]: string };
+  affiliation: Array<string>;
+  class: Array<string>;
+  tags: Array<string>;
+  statistics: {base: stats, e0max: stats, e1max: stats, e2max: stats};
   trait: string;
   costs: {[key: string]: string};
-  potential: Array<opDict>;
-  trust: [{ [key: string]: string }];
-  talents: Array<opDict>;
+  potential: Array<{name: string, value: string;}>;
+  trust: { [key: string]: string };
+  talents: Array<{name: string, value: string;}>;
   skills: Array<skill>;
-  module: Array<module>;
+  module: module;
   base: Array<base>;
   headhunting: string;
   recruitable: string;
-  art: Array<art>;
+  art: {[key: string]: string};
   availability: string;
   url: string;
-  dateAdded: Date;
+  dateAdded?: Date;
 }

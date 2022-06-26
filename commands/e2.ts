@@ -13,7 +13,7 @@ export const E2 = {
         let name = interaction.options.getString('name');
 			  name = name!.replace(" ", "-");
         let response = await fetch(
-          `http://localhost:5219/api/rhodes/skins/e2/${name}`
+          `https://rhodesapi.herokuapp.com/api/rhodes/skins/e2/${name}`
         );
         let e2 = await response.json();
         await interaction.reply(e2.e2);
