@@ -24,5 +24,3 @@ export const VideoSchema = new mongoose.Schema<Video>({
   authorID: String,
   announced: Boolean
 })
-
-// export default mongoose.model<Video>('Video', VideoSchema);
