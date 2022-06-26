@@ -32,10 +32,14 @@ export async function fetchLiveStream(guildID: string, channelID: string): Promi
     }
     if(addFeed.length > 0) {
       const checkLatestVideo = await guildDB.findOne({ title: feed.items[0].title });
+      console.log(checkLatestVideo);
       if(checkLatestVideo === null) {
         const latestVideo = feed.items[0];
+        // latestVideo.authorID = channelID;
         const announceableStream = await makeAnnouncement(latestVideo.id);
         latestVideo.authorID = channelID;
+        latestVideo.announced = true;
+        await guildDB.create(latestVideo);
         if(latestVideo.link === undefined) {
           return;
         }
@@ -108,7 +112,7 @@ const queryLiveStream = async (db: mongoose.Model<Video, {}, {}, {}>, channelID:
   }
 }
 
-async function infoStringExamine(url: string) {
+export const infoStringExamine = async (url: string) => {
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox','--disable-setuid-sandbox']
@@ -122,4 +126,39 @@ async function infoStringExamine(url: string) {
     return (info ? info.textContent : 'Nothing')
   })
   return ytInfoString;
+}
+
+export const getIDFromLink = async (name: string) => {
+  if(name.includes('/user/')) {
+    name = name.replace('Https://www.youtube.com/user/', '');
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&forUsername=${name}&key=${process.env.YTAPI}`);
+    const respJson = await response.json();
+    name = respJson.items[0].id;
+    return name;
+  }
+  if(name.includes('/c/')) {
+    name = name!.charAt(0).toLowerCase() + name!.slice(1);
+    name = name + '/videos'
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox','--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080});
+    await page.goto(name);
+    let latestLink = await page.evaluate(()=> {
+      let info = document.querySelector('#video-title');
+      return (info ? (info as HTMLAnchorElement).href : 'Nothing')
+    })
+    latestLink = latestLink.replace('https://www.youtube.com/watch?v=', '');
+    const response = await fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${latestLink}&key=${process.env.YTAPI}`);
+    const respJson = await response.json();
+    name = respJson.items[0].snippet.channelId;
+    return name;
+  }
+  if(name.includes('/channel/')) {
+    name = name.replace('Https://www.youtube.com/channel/', '');
+    return name;
+  }
+  return name;
 }
