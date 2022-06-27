@@ -20,18 +20,22 @@ export const live = {
         const searchRegex = new RegExp(name);
         let match = await YoutubeChannel.find({ "$or": [{ name: searchRegex }, { english_name: searchRegex }] }).limit(1);
         if(match[0]) {
+          console.log(match[0].id);
           const responseLive = await fetch(`https://holodex.net/api/v2/live?channel_id=${match[0].id}`);
           const liveJson = await responseLive.json();
-          const responseLivestream = await fetch(`https://holodex.net/api/v2/videos/${liveJson[0].id}`);
-          const livestreamJson = await responseLivestream.json();
-          let announcementEmbed = await makeAnnouncement(livestreamJson.id);
-          await interaction.reply({
-            content: announcementEmbed.content,
-            embeds: announcementEmbed.embeds
-          })
+          if(liveJson.length > 0) {
+            const responseLivestream = await fetch(`https://holodex.net/api/v2/videos/${liveJson[0].id}`);
+            const livestreamJson = await responseLivestream.json();
+            let announcementEmbed = await makeAnnouncement(livestreamJson.id);
+            await interaction.reply({
+              content: announcementEmbed.content,
+              embeds: announcementEmbed.embeds
+            })
+          } else {
+            await interaction.reply({content: 'That channel is not currently streaming!', ephemeral: true});
+          }
         } else {
           let otherChannelID = await getIDFromLink(name);
-          console.log(otherChannelID);
           const response = await fetch(`https://youtube.com/channel/${otherChannelID}/live`);
           const text = await response.text();
           const html = parse(text);
