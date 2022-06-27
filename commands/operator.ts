@@ -13,16 +13,21 @@ export const operator = {
         if(interaction.isCommand()) {
           let name = interaction.options.getString('name');
           name = name!.replaceAll(' ', '-');
-          const data = await getOperatorData(name);
-          const imgList: {[key: string]: string} = data['art'];
-          let buttons = assembleButtons(imgList);
-          const embed = formulate_response(data);
-          const timeout = 120000;
-          await skinPaginator(interaction, embed, buttons, imgList, timeout)
+          const data: Operator | { error: 'Operator not found'} = await getOperatorData(name);
+          if(Object.keys(data).includes('error')) {
+            await interaction.reply({ content: 'Something went wrong with the operator name you specified.', ephemeral: true });
+          } else {
+            const imgList: {[key: string]: string} = (data as Operator)['art'];
+            let buttons = assembleButtons(imgList);
+            const embed = formulate_response((data as Operator));
+            const timeout = 120000;
+            await skinPaginator(interaction, embed, buttons, imgList, timeout)
+          }
         }
-      } catch (error) {
+      } catch (error: any) {
+        console.log(error.message);
         if(interaction.isCommand()) {
-          await interaction.reply({ content: 'There was an error while executing this command!' + error, ephemeral: true });
+          await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
         }
       }
     }
@@ -31,7 +36,7 @@ export const operator = {
 const getOperatorData = async(operator: string) => {
   operator = operator.replace(' ', '-');
   const response = await fetch(`https://rhodesapi.herokuapp.com/api/rhodes/operator/${operator}`);
-  const json: Operator = await response.json();
+  const json = await response.json();
   return json;
 }
 
@@ -86,7 +91,7 @@ function formulate_response(operator: Operator) {
         inline: true
       })
       .addField('Quote', operator.quote)
-      .setImage(operator.art.Base)
+      .setImage(operator.art.none)
       .setTimestamp()
     ;
   return operatorEmbed;
