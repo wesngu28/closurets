@@ -11,36 +11,29 @@ export const configureTracker = {
     if(!interaction.isCommand()) {
       return;
     }
-		try {
-      interface Tracker {
-        _id: string;
-        channelID: string;
-        ytID?: string;
+    interface Tracker {
+      _id: string;
+      channelID: string;
+      ytID?: string;
+    }
+    const member = interaction.member as GuildMember;
+    if(member!.permissions.has("ADMINISTRATOR") === false) {
+      await interaction.reply({ content: 'You are not able to execute this command!', ephemeral: true });
+      return;
+    }
+    const tracked = await Tracker.findOne(({ _id: interaction.guild!.id }));
+    if (tracked) {
+      tracked.ytID = interaction.options.getString('channel')!;
+      await tracked.save();
+      interaction.reply({content: `Now tracking activity from ${tracked.ytID}`, ephemeral: true})
+    } else {
+      const trackerObject: Tracker = {
+        _id: interaction.guild!.id,
+        channelID: interaction.channel!.id
       }
-      const member = interaction.member as GuildMember;
-      if(member!.permissions.has("ADMINISTRATOR") === false) {
-        await interaction.reply({ content: 'You are not able to execute this command!', ephemeral: true });
-        return;
-      }
-      const tracked = await Tracker.findOne(({ _id: interaction.guild!.id }));
-      if (tracked) {
-        tracked.ytID = interaction.options.getString('channel')!;
-        await tracked.save();
-        interaction.reply({content: `Now tracking activity from ${tracked.ytID}`, ephemeral: true})
-      } else {
-        const trackerObject: Tracker = {
-          _id: interaction.guild!.id,
-          channelID: interaction.channel!.id
-        }
-        trackerObject.ytID = interaction.options.getString('channel')!;
-        await Tracker.create(trackerObject);
-        interaction.reply({content: `Now tracking activity from ${trackerObject.ytID}`, ephemeral: true})
-      }
-		} catch (error) {
-      if(interaction.isCommand()) {
-			  console.error(error);
-			  await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-      }
-		}
+      trackerObject.ytID = interaction.options.getString('channel')!;
+      await Tracker.create(trackerObject);
+      interaction.reply({content: `Now tracking activity from ${trackerObject.ytID}`, ephemeral: true})
+    }
 	},
 }
