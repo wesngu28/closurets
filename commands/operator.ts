@@ -9,25 +9,18 @@ export const operator = {
 		.setDescription('Replies with your input!')
 		.addStringOption(option => option.setName('name').setDescription('Rhodes Island Operator').setRequired(true)),
     async execute(interaction: Interaction) {
-      try {
-        if(interaction.isCommand()) {
-          let name = interaction.options.getString('name');
-          name = name!.replaceAll(' ', '-');
-          const data: Operator | { error: 'Operator not found'} = await getOperatorData(name);
-          if(Object.keys(data).includes('error')) {
-            await interaction.reply({ content: 'Something went wrong with the operator name you specified.', ephemeral: true });
-          } else {
-            const imgList: {[key: string]: string} = (data as Operator)['art'];
-            let buttons = assembleButtons(imgList);
-            const embed = formulate_response((data as Operator));
-            const timeout = 120000;
-            await skinPaginator(interaction, embed, buttons, imgList, timeout)
-          }
-        }
-      } catch (error: any) {
-        console.log(error.message);
-        if(interaction.isCommand()) {
-          await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+      if(interaction.isCommand()) {
+        let name = interaction.options.getString('name');
+        name = name!.replaceAll(' ', '-');
+        const data: Operator | { error: 'Operator not found'} = await getOperatorData(name);
+        if(Object.keys(data).includes('error')) {
+          await interaction.reply({ content: 'Something went wrong with the operator name you specified.', ephemeral: true });
+        } else {
+          const imgList: {[key: string]: string} = (data as Operator)['art'];
+          let buttons = assembleButtons(imgList);
+          const embed = formulate_response((data as Operator));
+          const timeout = 120000;
+          await skinPaginator(interaction, embed, buttons, imgList, timeout)
         }
       }
     }
@@ -58,7 +51,7 @@ function formulate_response(operator: Operator) {
     rarity = rarity + '★';
   }
   let author = {
-    name: rarity
+    name: `${rarity} ${operator.class[2]}`
   }
 
   const operatorEmbed = new MessageEmbed()
@@ -69,8 +62,13 @@ function formulate_response(operator: Operator) {
       .setAuthor(author)
       .addField('Biography', operator.biography)
       .addFields({
-        name: 'Origin',
-        value: `${operator.lore.Gender} ${operator.lore.Race} from ${operator.lore['Place of Birth']}`
+        name: 'Race',
+        value: operator['lore']['Race'],
+        inline: true
+      }, {
+        name: 'Birth',
+        value: operator['lore']['Place of Birth'],
+        inline: true
       }, {
         name: 'Birthday',
         value: operator['lore']['Birthday'],
@@ -79,8 +77,6 @@ function formulate_response(operator: Operator) {
         name: 'Height',
         value: operator['lore']['Height'],
         inline: true
-      }, {
-        name: '\u200B', value: '\u200B',
       }, {
         name: 'Artist',
         value: operator.artist,
