@@ -4,6 +4,7 @@ import Tracker from "../models/Tracker";
 
 export const ready = async(client: Closure) => {
   console.log(`Bot ${client.user?.tag} is logged in!`);
+  client.user?.setPresence({activities: [{name: 'Selling Originite Prime'}]});
   try {
     setInterval(() => {
       const guilds = client.guilds.cache.map(guild => guild.id);
