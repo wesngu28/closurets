@@ -32,7 +32,6 @@ export async function fetchLiveStream(guildID: string, channelID: string): Promi
     }
     if(addFeed.length > 0) {
       const checkLatestVideo = await guildDB.findOne({ title: feed.items[0].title });
-      console.log(checkLatestVideo);
       if(checkLatestVideo === null) {
         const latestVideo = feed.items[0];
         // latestVideo.authorID = channelID;
@@ -47,8 +46,10 @@ export async function fetchLiveStream(guildID: string, channelID: string): Promi
         if((ytInfoString?.includes('Started') || ytInfoString?.includes('watching now')) && !ytInfoString?.includes('Scheduled') && announceableStream) {
           return announceableStream;
         }
-        announceableStream.content = `@everyone ${latestVideo.author} has just uploaded ${latestVideo.title} ${latestVideo.link}`;
-        return announceableStream;
+        if(!ytInfoString?.includes('Scheduled')) {
+          announceableStream.content = `@everyone ${latestVideo.author} has just uploaded ${latestVideo.title} ${latestVideo.link}`;
+          return announceableStream;
+        }
       }
     }
     return;
