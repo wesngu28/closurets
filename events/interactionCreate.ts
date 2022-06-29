@@ -1,6 +1,6 @@
 import { Interaction } from "discord.js";
 import { Closure } from "../client/Closure";
-const commandCooldown = new Set();
+const commandCooldown = new Set<string>;
 
 export const interactionCreate = async (client: Closure, interaction: Interaction) => {
 	if (!interaction.isCommand()) return;

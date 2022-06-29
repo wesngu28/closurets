@@ -34,28 +34,32 @@ export const live = {
         }
       } else {
         let otherChannelID = await getIDFromLink(name);
-        const response = await fetch(`https://youtube.com/channel/${otherChannelID}/live`);
-        const text = await response.text();
-        const html = parse(text);
-        const canonicalURLTag = html.querySelector('link[rel=canonical]');
-        let canonicalURL = canonicalURLTag!.getAttribute('href')!;
-        if (canonicalURL.includes('/watch?v=')) {
-          interaction.deferReply();
-          const ytInfoString = await infoStringExamine(canonicalURL);
-          if(ytInfoString!.includes('Started')) {
-            let cutString = 'https://www.youtube.com/watch?v=';
-            let queryIndex = canonicalURL.indexOf('https://www.youtube.com/watch?v=');
-            canonicalURL = canonicalURL.replace(canonicalURL.substring(queryIndex, cutString.length), "");
-            const announcementEmbed = await makeAnnouncement(canonicalURL);
-            await interaction.editReply({
-              content: announcementEmbed.content,
-              embeds: announcementEmbed.embeds
-            })
+        if(otherChannelID.includes('shorts')) {
+          await interaction.reply({content: 'That channel is not currently streaming!', ephemeral: true});
+        } else {
+          const response = await fetch(`https://youtube.com/channel/${otherChannelID}/live`);
+          const text = await response.text();
+          const html = parse(text);
+          const canonicalURLTag = html.querySelector('link[rel=canonical]');
+          let canonicalURL = canonicalURLTag!.getAttribute('href')!;
+          if (canonicalURL.includes('/watch?v=')) {
+            interaction.deferReply();
+            const ytInfoString = await infoStringExamine(canonicalURL);
+            if(ytInfoString!.includes('Started')) {
+              let cutString = 'https://www.youtube.com/watch?v=';
+              let queryIndex = canonicalURL.indexOf('https://www.youtube.com/watch?v=');
+              canonicalURL = canonicalURL.replace(canonicalURL.substring(queryIndex, cutString.length), "");
+              const announcementEmbed = await makeAnnouncement(canonicalURL);
+              await interaction.editReply({
+                content: announcementEmbed.content,
+                embeds: announcementEmbed.embeds
+              })
+            } else {
+              await interaction.reply({content: 'That channel is not currently streaming!', ephemeral: true});
+            }
           } else {
             await interaction.reply({content: 'That channel is not currently streaming!', ephemeral: true});
           }
-        } else {
-          await interaction.reply({content: 'That channel is not currently streaming!', ephemeral: true});
         }
       }
     }
