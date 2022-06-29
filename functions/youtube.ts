@@ -20,11 +20,14 @@ export async function fetchLiveStream(guildID: string, channelID: string): Promi
     const addFeed = await guildDB.find();
     if(addFeed.length === 0) {
       const videos = feed.items;
-      videos.forEach(async(video) => {
-        video.authorID = channelID;
-        video.announced = false;
-        await guildDB.create(video);
-      })
+      for(let i = 0; i < videos.length; i++) {
+        videos[i].authorID = channelID;
+        videos[i].announced = false;
+        const ytInfoString = await infoStringExamine(videos[i].link!);
+        if(!ytInfoString?.includes('Scheduled')) {
+          await guildDB.create(videos[i]);
+        }
+      }
       const announceableStream = await queryLiveStream(guildDB, channelID);
       if(announceableStream) {
         return announceableStream;
@@ -38,16 +41,17 @@ export async function fetchLiveStream(guildID: string, channelID: string): Promi
         const announceableStream = await makeAnnouncement(latestVideo.id);
         latestVideo.authorID = channelID;
         latestVideo.announced = true;
-        await guildDB.create(latestVideo);
         if(latestVideo.link === undefined) {
           return;
         }
         const ytInfoString = await infoStringExamine(latestVideo.link);
         if((ytInfoString?.includes('Started') || ytInfoString?.includes('watching now')) && !ytInfoString?.includes('Scheduled') && announceableStream) {
+          await guildDB.create(latestVideo);
           return announceableStream;
         }
         if(!ytInfoString?.includes('Scheduled')) {
           announceableStream.content = `@everyone ${latestVideo.author} has just uploaded ${latestVideo.title} ${latestVideo.link}`;
+          await guildDB.create(latestVideo);
           return announceableStream;
         }
       }
@@ -126,10 +130,14 @@ export const infoStringExamine = async (url: string) => {
     let info = document.querySelector('#info-strings > yt-formatted-string');
     return (info ? info.textContent : 'Nothing')
   })
+  await browser.close();
   return ytInfoString;
 }
 
 export const getIDFromLink = async (name: string) => {
+  if(name.charAt(0) === 'U') {
+    return name;
+  }
   if(name.includes('/user/')) {
     name = name.replace('Https://www.youtube.com/user/', '');
     const response = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=snippet&forUsername=${name}&key=${process.env.YTAPI}`);
@@ -152,9 +160,13 @@ export const getIDFromLink = async (name: string) => {
       return (info ? (info as HTMLAnchorElement).href : 'Nothing')
     })
     latestLink = latestLink.replace('https://www.youtube.com/watch?v=', '');
+    if(latestLink.includes('shorts')) {
+      return 'shorts';
+    }
     const response = await fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${latestLink}&key=${process.env.YTAPI}`);
     const respJson = await response.json();
     name = respJson.items[0].snippet.channelId;
+    await browser.close();
     return name;
   }
   if(name.includes('/channel/')) {
