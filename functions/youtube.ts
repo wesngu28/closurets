@@ -42,6 +42,13 @@ export async function fetchLiveStream(guildID: string, channelID: string, date: 
         return announceableStream;
       }
     }
+
+    // Scheduled streams are not added so if a stream has went from scheduled to live it needs to be announced and added.
+    const announceableStream = await queryLiveStream(guildDB, channelID);
+    if(announceableStream) {
+      return announceableStream;
+    }
+
     // Needed to snipe uploads that may not update in the XML on time
     const browser = await puppeteer.launch({
       headless: true,
