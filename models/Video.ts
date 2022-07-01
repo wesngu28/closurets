@@ -3,13 +3,12 @@ import mongoose from 'mongoose';
 export interface Video {
   title: string;
   link: string;
-  pubDate: string;
-  author: string;
-  id: string;
-  isoDate: string;
-  type: string;
-  authorID: string;
-  announced?: boolean;
+  pubDate?: string;
+  author?: string;
+  id?: string;
+  isoDate?: string;
+  type?: string;
+  authorID?: string;
 }
 
 
@@ -21,6 +20,5 @@ export const VideoSchema = new mongoose.Schema<Video>({
   id: String,
   isoDate: String,
   type: String,
-  authorID: String,
-  announced: Boolean
+  authorID: String
 })
