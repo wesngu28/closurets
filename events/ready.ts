@@ -1,6 +1,7 @@
 import { Closure } from "../client/Closure";
 import { fetchLiveStream } from "../functions/youtube";
 import Tracker from "../models/Tracker";
+const currentDate = new Date(Date.now()).toISOString();
 
 export const ready = async(client: Closure) => {
   console.log(`Bot ${client.user?.tag} is logged in!`);
@@ -12,13 +13,13 @@ export const ready = async(client: Closure) => {
         const tracked = await Tracker.findOne(({ _id: guild }));
         if(tracked !== null) {
           const channel = client.channels.cache.get(tracked!.channelID);
-          fetchLiveStream(guild, tracked.ytID!).then(async (data) => {
+          fetchLiveStream(guild, tracked.ytID!, currentDate).then(async (data) => {
             if (data !== undefined) {
               if(channel?.isText()) {
                 channel?.send(data);
               }
             }
-        })
+          })
         }
       });
     }, 60 * 1000)
