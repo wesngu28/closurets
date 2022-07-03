@@ -7,7 +7,7 @@ type stats = {
   cost: string;
   block: string;
   interval: string;
-}
+};
 
 type skill = {
   name: string;
@@ -16,7 +16,7 @@ type skill = {
   chargeType: string;
   skillActivation: string;
   skillDescription: string;
-}
+};
 
 type module = {
   name: string;
@@ -25,14 +25,14 @@ type module = {
   availability: string;
   trait: string;
   missions: string[];
-}
+};
 
 type base = {
   name: string;
   level: string;
   effects: string;
   building: string;
-}
+};
 
 export interface Operator {
   _id: string;
@@ -49,18 +49,18 @@ export interface Operator {
   affiliation: Array<string>;
   class: Array<string>;
   tags: Array<string>;
-  statistics: {base: stats, e0max: stats, e1max: stats, e2max: stats};
+  statistics: { base: stats; e0max: stats; e1max: stats; e2max: stats };
   trait: string;
-  costs: {[key: string]: string};
-  potential: Array<{name: string, value: string;}>;
+  costs: { [key: string]: string };
+  potential: Array<{ name: string; value: string }>;
   trust: { [key: string]: string };
-  talents: Array<{name: string, value: string;}>;
+  talents: Array<{ name: string; value: string }>;
   skills: Array<skill>;
   module: module;
   base: Array<base>;
   headhunting: string;
   recruitable: string;
-  art: {[key: string]: string};
+  art: { [key: string]: string };
   availability: string;
   url: string;
   dateAdded?: Date;
