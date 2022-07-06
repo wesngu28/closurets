@@ -11,7 +11,9 @@ export const interactionCreate: DiscordEvent = {
     const commandName = Object.keys(command)[0];
     if (!command) return;
     if (
-      client.cooldown.has(`${interaction.guild}.${interaction.commandName}.${interaction.user.id}`)
+      client.cooldown.has(
+        `${interaction.guild}.${interaction.channelId}.${interaction.commandName}.${interaction.user.id}`
+      )
     ) {
       interaction.reply({
         content: 'Please wait for ten seconds after using this command before trying again',
@@ -22,15 +24,17 @@ export const interactionCreate: DiscordEvent = {
 
     try {
       await command[commandName].execute(interaction);
-      client.cooldown.add(`${interaction.guild}.${interaction.commandName}.${interaction.user.id}`);
+      client.cooldown.add(
+        `${interaction.guild}.${interaction.channelId}.${interaction.commandName}.${interaction.user.id}`
+      );
       setTimeout(() => {
         client.cooldown.delete(
-          `${interaction.guild}.${interaction.commandName}.${interaction.user.id}`
+          `${interaction.guild}.${interaction.channelId}.${interaction.commandName}.${interaction.user.id}`
         );
       }, 10000);
     } catch (error) {
       client.cooldown.delete(
-        `${interaction.guild}.${interaction.commandName}.${interaction.user.id}`
+        `${interaction.guild}.${interaction.channelId}.${interaction.commandName}.${interaction.user.id}`
       );
     }
   },
