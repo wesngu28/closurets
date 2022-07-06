@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "build": "tsc --project tsconfig.json",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "startwin": "tsc && SET NODE_ENV=production&& node dist/index.js",
+    "start": "NODE_ENV=production node /closure/dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +20,10 @@
     "discord.js": "^13.8.0",
     "dotenv": "^16.0.1",
     "mongoose": "^6.3.6",
-    "node-fetch": "^2.6.6",
+    "node-fetch": "^2.6.7",
     "node-html-parser": "^5.3.3",
-    "puppeteer": "^14.3.0",
+    "playwright-chromium": "^1.23.1",
+    "redis": "^4.2.0",
     "rss-parser": "^3.12.0"
   },
   "devDependencies": {

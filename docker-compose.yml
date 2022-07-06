@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  web:
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/closure
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis:/data
+volumes:
+  redis:
