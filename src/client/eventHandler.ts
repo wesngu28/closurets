@@ -4,7 +4,13 @@ import { Closure } from './Closure';
 
 export async function eventHandler(client: Closure): Promise<void> {
   const eventsPath = path.join(__dirname, '../events');
-  const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
+  let eventFiles: string[] = [];
+  if (process.env.NODE_ENV === 'development') {
+    eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.ts'));
+  }
+  if (process.env.NODE_ENV === 'production') {
+    eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+  }
   for await (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);
     const event = await import(filePath);

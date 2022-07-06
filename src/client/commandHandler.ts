@@ -9,7 +9,13 @@ dotenv.config({ path: path.resolve(__dirname, './.env') });
 
 export async function commandHandler(client: Closure): Promise<void> {
   const commandsPath = path.join(__dirname, '../commands');
-  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
+  let commandFiles: string[] = [];
+  if (process.env.NODE_ENV === 'development') {
+    commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.ts'));
+  }
+  if (process.env.NODE_ENV === 'production') {
+    commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+  }
   for await (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = await import(filePath);
@@ -21,7 +27,7 @@ export async function commandHandler(client: Closure): Promise<void> {
 export async function deployCommands(): Promise<void> {
   const commands = [];
   const commandsPath = path.join(__dirname, '../commands');
-  const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.ts'));
+  const commandFiles = fs.readdirSync(commandsPath);
 
   for await (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
