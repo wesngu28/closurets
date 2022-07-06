@@ -1,0 +1,42 @@
+import dotenv from 'dotenv';
+import fetch from 'node-fetch';
+import ChannelModel from '../models/channelModel';
+import { databaseConnect } from '../models/connect';
+import { Channel } from '../types/Channel';
+
+dotenv.config();
+
+databaseConnect();
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function getStreamers() {
+  const valid = true;
+  let offset = 0;
+  while (valid) {
+    await sleep(2500);
+    const holoRes = await fetch(
+      `https://holodex.net/api/v2/channels?type=vtuber&offset=${offset++}&limit=1`,
+      {
+        method: 'GET',
+        headers: {
+          'x-api-key': 'b72e01f7-0b1e-4bf3-862d-04687142608f',
+        },
+      }
+    );
+    const json: Array<Channel> = (await holoRes.json()) as Array<Channel>;
+    if (json[0]) {
+      const findAlreadyExisting = ChannelModel.findOne({
+        name: json[0].name,
+      });
+      if (!findAlreadyExisting) {
+        console.log(`Added ${json[0].english_name}`);
+        await ChannelModel.create(json);
+      }
+      console.log(`Database already has ${json[0].english_name}`);
+    }
+  }
+}
+
+getStreamers();

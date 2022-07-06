@@ -1,3 +1,4 @@
+/* eslint consistent-return: off */
 import {
   ButtonInteraction,
   Interaction,
@@ -16,13 +17,12 @@ export const skinPaginator = async (
 ): Promise<Message<boolean> | undefined> => {
   const row = new MessageActionRow().addComponents(buttons);
   if (interact.isCommand()) {
-    await interact.deferReply();
-    const int = (await interact.editReply({
+    const buttonHolder = (await interact.editReply({
       embeds: [embed],
       components: [row],
     })) as Message<boolean>;
     const filter = (i: Interaction) => i.user.id === interact.user.id;
-    const collector = int.createMessageComponentCollector({
+    const collector = buttonHolder.createMessageComponentCollector({
       filter,
       time: timeout,
     });
@@ -34,7 +34,6 @@ export const skinPaginator = async (
       });
       collector.resetTimer();
     });
-    return int;
+    return buttonHolder;
   }
-  return undefined;
 };
