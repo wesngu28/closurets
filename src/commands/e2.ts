@@ -11,11 +11,20 @@ export const E2: Command = {
       option.setName('name').setDescription('Rhodes Island Operator').setRequired(true)
     ),
   async execute(interaction: Interaction) {
-    if (interaction.isCommand()) {
-      const name = interaction.options.getString('name')!.replace(' ', '-');
-      const response = await fetch(`https://rhodesapi.herokuapp.com/api/rhodes/skins/e2/${name}`);
-      const e2: { e2: string } = (await response.json()) as { e2: string };
-      await interaction.reply(e2.e2);
+    try {
+      if (interaction.isCommand()) {
+        const name = interaction.options.getString('name')!.replace(' ', '-');
+        const response = await fetch(`https://rhodesapi.herokuapp.com/api/rhodes/skins/e2/${name}`);
+        const e2: { e2: string } = (await response.json()) as { e2: string };
+        await interaction.reply(e2.e2);
+      }
+    } catch (err) {
+      if (interaction.isCommand()) {
+        await interaction.reply({
+          content: 'There was an error while executing this command!',
+          ephemeral: true,
+        });
+      }
     }
   },
 };
