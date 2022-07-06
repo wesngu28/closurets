@@ -1,20 +1,12 @@
 import { MessageEmbed } from 'discord.js';
-import { Operator } from '../../src/types/Operator';
+import { Operator } from '../../../types/Operator';
 
 export const formulateResponse = (operator: Operator) => {
-  let rarity = '';
-  for (let i = 0; i < Number(operator.rarity); i += 1) {
-    rarity += '★';
-  }
-  let opclass: string;
+  const rarity = '★'.repeat(Number(operator.rarity));
   const [, class1, class2] = operator.class;
-  if (class2) {
-    opclass = class2;
-  } else {
-    opclass = class1;
-  }
+  const opClass = class2 || class1;
   const author = {
-    name: `${rarity} ${opclass}`,
+    name: `${rarity} ${opClass}`,
   };
 
   const operatorEmbed = new MessageEmbed()
