@@ -2,10 +2,10 @@ import mongoose from 'mongoose';
 import Parser from 'rss-parser';
 import { parse } from 'node-html-parser';
 import fetch from 'node-fetch';
-import { AnnouncementEmbed } from '../../src/types/AnnouncementEmbed';
-import { Video } from '../../src/types/Video';
 import { infoStringExamine } from './infoStringExamine';
 import { makeAnnouncement } from './makeAnnouncement';
+import { AnnouncementEmbed } from '../../../types/AnnouncementEmbed';
+import { Video } from '../../../types/Video';
 
 const parser = new Parser();
 
@@ -19,7 +19,6 @@ export const queryLiveStream = async (
   const canonicalURLTag = html.querySelector('link[rel=canonical]');
   const canonicalURL = canonicalURLTag?.getAttribute('href');
   let resultLink: string;
-  console.log(canonicalURL);
   if (canonicalURL && canonicalURL.includes('/watch?v=')) {
     const ytInfoString = await infoStringExamine(canonicalURL!);
     if (ytInfoString?.includes('Started')) {
@@ -31,16 +30,16 @@ export const queryLiveStream = async (
         const feed = await parser.parseURL(
           `https://www.youtube.com/feeds/videos.xml?channel_id=${channelID}`
         );
-        for await (const video of feed.items) {
-          if (
-            video.id.replace('yt:video:', '') ===
+        const streamVideo = feed.items.find(
+          video =>
+            video.id.replace('yt:video', '') ===
             resultLink.replace('https://www.youtube.com/watch?v=', '')
-          ) {
-            video.authorID = channelID;
-            await db.create(video);
-            const embed = await makeAnnouncement(video.id);
-            return embed;
-          }
+        );
+        if (streamVideo) {
+          streamVideo.authorID = channelID;
+          await db.create(streamVideo);
+          const embed = await makeAnnouncement(streamVideo.id);
+          return embed;
         }
       }
     }
