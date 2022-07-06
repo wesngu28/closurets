@@ -30,16 +30,16 @@ export const queryLiveStream = async (
         const feed = await parser.parseURL(
           `https://www.youtube.com/feeds/videos.xml?channel_id=${channelID}`
         );
-        const streamVideo = feed.items.find(
-          video =>
-            video.id.replace('yt:video', '') ===
+        for await (const video of feed.items) {
+          if (
+            video.id.replace('yt:video:', '') ===
             resultLink.replace('https://www.youtube.com/watch?v=', '')
-        );
-        if (streamVideo) {
-          streamVideo.authorID = channelID;
-          await db.create(streamVideo);
-          const embed = await makeAnnouncement(streamVideo.id);
-          return embed;
+          ) {
+            video.authorID = channelID;
+            await db.create(video);
+            const embed = await makeAnnouncement(video.id);
+            return embed;
+          }
         }
       }
     }
