@@ -2,9 +2,17 @@ import DiscordJS from 'discord.js';
 import { Command } from '../types/Command';
 
 export class Closure extends DiscordJS.Client {
-  public commands: DiscordJS.Collection<string, any>;
+  commands: DiscordJS.Collection<string, any>;
 
-  constructor() {
+  runDate: string;
+
+  cooldown: Set<String>;
+
+  constructor(
+    commands: DiscordJS.Collection<string, Command>,
+    runDate: string,
+    cooldown: Set<string>
+  ) {
     super({
       intents: [
         DiscordJS.Intents.FLAGS.GUILDS,
@@ -12,6 +20,8 @@ export class Closure extends DiscordJS.Client {
         DiscordJS.Intents.FLAGS.GUILD_MESSAGES,
       ],
     });
-    this.commands = new DiscordJS.Collection<string, Command>();
+    this.commands = commands;
+    this.runDate = runDate;
+    this.cooldown = cooldown;
   }
 }
