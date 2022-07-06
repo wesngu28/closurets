@@ -8,9 +8,9 @@ import { Command } from '../types/Command';
 import { holoLive } from '../types/holoLive';
 import { holoVideo } from '../types/holoVideo';
 import { timeUntil } from '../util/timeUntil';
-import { makeAnnouncement } from './helpers/youtube/makeAnnouncement';
-import { infoStringExamine } from './helpers/youtube/infoStringExamine';
-import { getIDFromLink } from './helpers/youtube/getIDFromLink';
+import { makeAnnouncement } from '../helpers/youtube/makeAnnouncement';
+import { infoStringExamine } from '../helpers/youtube/infoStringExamine';
+import { getIDFromLink } from '../helpers/youtube/getIDFromLink';
 
 dotenv.config();
 

@@ -1,5 +1,5 @@
 import { MessageEmbed } from 'discord.js';
-import { Operator } from '../../../types/Operator';
+import { Operator } from '../../types/Operator';
 
 export const formulateResponse = (operator: Operator) => {
   const rarity = '★'.repeat(Number(operator.rarity));

@@ -4,8 +4,8 @@ import { parse } from 'node-html-parser';
 import fetch from 'node-fetch';
 import { infoStringExamine } from './infoStringExamine';
 import { makeAnnouncement } from './makeAnnouncement';
-import { AnnouncementEmbed } from '../../../types/AnnouncementEmbed';
-import { Video } from '../../../types/Video';
+import { AnnouncementEmbed } from '../../types/AnnouncementEmbed';
+import { Video } from '../../types/Video';
 
 const parser = new Parser();
 

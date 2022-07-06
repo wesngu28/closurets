@@ -2,10 +2,10 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { Interaction } from 'discord.js';
 import { Command } from '../types/Command';
 import { Operator } from '../types/Operator';
-import { assembleButtons } from './helpers/operator/assembleButtons';
-import { formulateResponse } from './helpers/operator/formulateResponse';
-import { getOperatorData } from './helpers/operator/getOperatorData';
-import { skinPaginator } from './helpers/operator/skinPaginator';
+import { assembleButtons } from '../helpers/operator/assembleButtons';
+import { formulateResponse } from '../helpers/operator/formulateResponse';
+import { getOperatorData } from '../helpers/operator/getOperatorData';
+import { skinPaginator } from '../helpers/operator/skinPaginator';
 
 export const operator: Command = {
   data: new SlashCommandBuilder()

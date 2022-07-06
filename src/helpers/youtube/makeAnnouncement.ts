@@ -2,8 +2,8 @@ import { MessageEmbed } from 'discord.js';
 import { parse } from 'node-html-parser';
 import fetch from 'node-fetch';
 import { chromium } from 'playwright-chromium';
-import { getOrSetToCache } from '../../../models/getOrSetToCache';
-import { AnnouncementEmbed, EmbedInformation } from '../../../types/AnnouncementEmbed';
+import { getOrSetToCache } from '../../models/getOrSetToCache';
+import { AnnouncementEmbed, EmbedInformation } from '../../types/AnnouncementEmbed';
 
 export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmbed> => {
   let embedResponse = {} as EmbedInformation;

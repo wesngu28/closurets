@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import { VideoSchema } from '../../../models/Video';
-import { AnnouncementEmbed } from '../../../types/AnnouncementEmbed';
+import { VideoSchema } from '../../models/Video';
+import { AnnouncementEmbed } from '../../types/AnnouncementEmbed';
 import { infoStringExamine } from './infoStringExamine';
 import { queryLiveStream } from './queryLiveStream';
-import { Video } from '../../../types/Video';
+import { Video } from '../../types/Video';
 import { makeAnnouncement } from './makeAnnouncement';
 import { findLatestVideo } from './findLatestVideo';
 

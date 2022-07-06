@@ -1,5 +1,5 @@
 import { Closure } from '../client/Closure';
-import { fetchLiveStream } from '../commands/helpers/youtube/fetchLiveStream';
+import { fetchLiveStream } from '../helpers/youtube/fetchLiveStream';
 import trackerModel from '../models/trackerModel';
 import { DiscordEvent } from '../types/DiscordEvent';
 

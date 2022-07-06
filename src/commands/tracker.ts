@@ -7,9 +7,9 @@ import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
 import { Command } from '../types/Command';
 import { Tracker } from '../types/Tracker';
 import { Video } from '../types/Video';
-import { findLatestVideo } from './helpers/youtube/findLatestVideo';
-import { getIDFromLink } from './helpers/youtube/getIDFromLink';
-import { queryLiveStream } from './helpers/youtube/queryLiveStream';
+import { findLatestVideo } from '../helpers/youtube/findLatestVideo';
+import { getIDFromLink } from '../helpers/youtube/getIDFromLink';
+import { queryLiveStream } from '../helpers/youtube/queryLiveStream';
 
 const fillChannelCollection = async (
   /* eslint consistent-return: off */
