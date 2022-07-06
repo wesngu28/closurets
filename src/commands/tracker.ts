@@ -1,10 +1,34 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { GuildMember, Interaction } from 'discord.js';
+import mongoose from 'mongoose';
 import trackerModel from '../models/trackerModel';
+import { VideoSchema } from '../models/Video';
+import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
 import { Command } from '../types/Command';
 import { Tracker } from '../types/Tracker';
-import { fillChannelCollection } from './helpers/youtube/fillChannelCollection';
+import { Video } from '../types/Video';
+import { findLatestVideo } from './helpers/youtube/findLatestVideo';
 import { getIDFromLink } from './helpers/youtube/getIDFromLink';
+import { queryLiveStream } from './helpers/youtube/queryLiveStream';
+
+const fillChannelCollection = async (
+  /* eslint consistent-return: off */
+  guildID: string,
+  channelID: string
+): Promise<void | AnnouncementEmbed> => {
+  const guildDB = mongoose.model(`${guildID}`, VideoSchema);
+  await guildDB.deleteMany({ authorID: { $ne: channelID } });
+  const latestVideo = await findLatestVideo(channelID);
+  const preRunAnnounceableStream = await queryLiveStream(guildDB, channelID);
+  if (preRunAnnounceableStream) {
+    return preRunAnnounceableStream;
+  }
+  if (latestVideo !== 'no latest video found') {
+    const newDBVideo = latestVideo as Video;
+    newDBVideo.authorID = channelID;
+    await guildDB.create(newDBVideo);
+  }
+};
 
 export const configureTracker: Command = {
   data: new SlashCommandBuilder()
