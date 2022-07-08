@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { Interaction } from 'discord.js';
+import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import { Command } from '../types/Command';
 import { Operator } from '../types/Operator';
 import { assembleButtons } from '../helpers/operator/assembleButtons';
@@ -22,11 +23,7 @@ export const operator: Command = {
         name = name!.replaceAll(' ', '-');
         const data: Operator | { error: 'Operator not found' } = await getOperatorData(name);
         if (Object.keys(data).includes('error')) {
-          await interaction.deleteReply();
-          await interaction.followUp({
-            content: 'Something went wrong with the operator name you specified.',
-            ephemeral: true,
-          });
+          deleteAndFollowUp(interaction, 'Something went wrong with the operator you specified.');
         } else {
           const imgList: { [key: string]: string } = (data as Operator).art;
           const buttons = assembleButtons(imgList);
@@ -37,11 +34,7 @@ export const operator: Command = {
       }
     } catch (err) {
       if (interaction.isCommand()) {
-        await interaction.deleteReply();
-        await interaction.reply({
-          content: 'There was an error while executing this command!',
-          ephemeral: true,
-        });
+        deleteAndFollowUp(interaction, 'There was an error while executing this command!');
       }
     }
   },

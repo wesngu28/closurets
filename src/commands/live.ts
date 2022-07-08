@@ -3,6 +3,7 @@ import { Interaction } from 'discord.js';
 import parse from 'node-html-parser';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
+import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import channelModel from '../models/channelModel';
 import { Command } from '../types/Command';
 import { holoLive } from '../types/holoLive';
@@ -71,28 +72,16 @@ export const live: Command = {
             }
           }
           if (liveJson.length === 0) {
-            await interaction.deleteReply();
-            await interaction.followUp({
-              content: 'That channel is not currently streaming!',
-              ephemeral: true,
-            });
+            deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
           }
         } else {
           const otherChannelID = await getIDFromLink(interaction.options.getString('name')!);
           if (otherChannelID === 'You provided an invalid link') {
-            await interaction.deleteReply();
-            await interaction.followUp({
-              content: 'You provided an invalid field!',
-              ephemeral: true,
-            });
+            deleteAndFollowUp(interaction, 'You provided something invalid!');
             return;
           }
           if (otherChannelID.includes('shorts')) {
-            await interaction.deleteReply();
-            await interaction.followUp({
-              content: 'That channel is not currently streaming!',
-              ephemeral: true,
-            });
+            deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
           } else {
             const response = await fetch(`https://youtube.com/channel/${otherChannelID}/live`);
             const text = await response.text();
@@ -114,29 +103,17 @@ export const live: Command = {
                   embeds: announcementEmbed.embeds,
                 });
               } else {
-                await interaction.deleteReply();
-                await interaction.followUp({
-                  content: 'That channel is not currently streaming!',
-                  ephemeral: true,
-                });
+                deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
               }
             } else {
-              await interaction.deleteReply();
-              await interaction.followUp({
-                content: 'That channel is not currently streaming!',
-                ephemeral: true,
-              });
+              deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
             }
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (interaction.isCommand()) {
-        await interaction.deleteReply();
-        await interaction.reply({
-          content: 'There was an error while executing this command!',
-          ephemeral: true,
-        });
+        deleteAndFollowUp(interaction, 'There was an error while executing this command!');
       }
     }
   },
