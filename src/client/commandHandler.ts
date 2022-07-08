@@ -40,6 +40,11 @@ export async function deployCommands(): Promise<void> {
 
   rest
     .put(Routes.applicationCommands(process.env.CID!), { body: commands })
-    .then(() => console.log('Successfully registered application commands.'))
-    .catch(console.error);
+    .then(() => {
+      if (process.env.NODE_ENV === 'development')
+        console.log('Successfully registered application commands.');
+    })
+    .catch(() => {
+      if (process.env.NODE_ENV === 'development') console.log(console.error);
+    });
 }
