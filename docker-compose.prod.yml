@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+    web:
+      build:
+        target: production
+      env_file:
+        - .env
+      container_name: closure_prod
+      depends_on:
+        - redis
+      deploy:
+        restart_policy:
+          condition: on-failure
+      command: npm run start
+    redis:
+      image: "redis:alpine"
+      ports:
+        - "6379:6379"
+      volumes:
+        - redis:/data
+volumes:
+  redis:

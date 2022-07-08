@@ -3,14 +3,19 @@ services:
   web:
     build:
       context: .
+      dockerfile: Dockerfile
+      target: development
     env_file:
       - .env
+    container_name: closure_dev
     volumes:
-      - .:/closure
-    restart_policy:
-      condition: on-failure
+      - ./src:/closure/src
     depends_on:
       - redis
+    deploy:
+      restart_policy:
+        condition: on-failure
+    command: npm run dev
   redis:
     image: "redis:alpine"
     ports:

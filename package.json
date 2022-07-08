@@ -5,10 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.ts",
+    "dev": "NODE_ENV=development nodemon -L src/index.ts",
     "startwin": "tsc && SET NODE_ENV=production&& node dist/index.js",
-    "start": "NODE_ENV=production node /closure/dist/index.js"
+    "start": "NODE_ENV=production node dist/index.js"
   },
   "keywords": [],
   "author": "",
