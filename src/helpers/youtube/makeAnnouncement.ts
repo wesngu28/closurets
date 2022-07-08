@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import { chromium } from 'playwright-chromium';
 import { getOrSetToCache } from '../../models/getOrSetToCache';
 import { AnnouncementEmbed, EmbedInformation } from '../../types/AnnouncementEmbed';
+import { sleep } from '../../util/sleep';
 
 export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmbed> => {
   let embedResponse = {} as EmbedInformation;
@@ -36,14 +37,14 @@ export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmb
   if (process.env.YTAPI_USE === 'MIN') {
     embedResponse = await getOrSetToCache(`announcevideo?=${id}`, async () => {
       const embedInformation = {} as EmbedInformation;
-      const browser = await chromium.launchPersistentContext('/puppet', {
+      const browser = await chromium.launch({
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
       });
       const page = await browser.newPage();
       await page.setViewportSize({ width: 1920, height: 1080 });
       await page.goto(`https://www.youtube.com/watch?v=${id}`);
-      await page.waitForSelector('#container > h1 > yt-formatted-string');
+      await sleep(100);
       const scriptTag = await page.$('//*[@id="scriptTag"]');
       const content = JSON.parse(await page.evaluate(el => el!.innerHTML, scriptTag));
       const iconURL = await page.evaluate(() => {

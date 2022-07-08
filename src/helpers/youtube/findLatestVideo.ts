@@ -3,7 +3,7 @@ import { chromium } from 'playwright-chromium';
 export const findLatestVideo = async (
   channelID: string
 ): Promise<string | { title: string; link: string }> => {
-  const browser = await chromium.launchPersistentContext('/puppet', {
+  const browser = await chromium.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
   });

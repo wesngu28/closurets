@@ -1,7 +1,7 @@
 import { chromium } from 'playwright-chromium';
 
 export const infoStringExamine = async (url: string) => {
-  const browser = await chromium.launchPersistentContext('/puppet', {
+  const browser = await chromium.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
   });
