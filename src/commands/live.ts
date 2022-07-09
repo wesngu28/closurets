@@ -31,7 +31,13 @@ export const live: Command = {
         await interaction.deferReply();
         const name = interaction.options.getString('name');
         const checkID = name?.replace('https://www.youtube.com/channel/', '');
-        const searchRegex = new RegExp(checkID!);
+        const searchRegex = new RegExp(
+          checkID!
+            .toLowerCase()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ')
+        );
         const match = await channelModel
           .find({
             $or: [{ name: searchRegex }, { english_name: searchRegex }, { id: searchRegex }],
@@ -64,7 +70,7 @@ export const live: Command = {
               await interaction.editReply({
                 content: announcementEmbed.content.replace(
                   'is live at',
-                  `is not currently live but will be soon in ${timeUntil(video.available_at)}`
+                  `will live soon in ${timeUntil(video.available_at)}`
                 ),
                 embeds: announcementEmbed.embeds,
               });
@@ -77,7 +83,7 @@ export const live: Command = {
         } else {
           const otherChannelID = await getIDFromLink(interaction.options.getString('name')!);
           if (otherChannelID === 'You provided an invalid link') {
-            deleteAndFollowUp(interaction, 'You provided something invalid!');
+            deleteAndFollowUp(interaction, 'You provided an invalid field!');
             return;
           }
           if (otherChannelID.includes('shorts')) {
@@ -113,7 +119,10 @@ export const live: Command = {
       }
     } catch (err: any) {
       if (interaction.isCommand()) {
-        deleteAndFollowUp(interaction, 'There was an error while executing this command!');
+        deleteAndFollowUp(
+          interaction,
+          `There was an error (${err.message}) while executing this command!`
+        );
       }
     }
   },
