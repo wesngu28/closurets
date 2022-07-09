@@ -7,8 +7,6 @@ COPY package*.json ./
 RUN npm install
 RUN npx playwright install
 
-ENV REDIS=docker
-
 COPY . .
 
 FROM development as production

@@ -6,12 +6,17 @@ class Redis {
   public expirationDefault: number;
 
   constructor() {
-    if (process.env.DOCKER) {
+    if (process.env.NODE_ENV === 'production') {
+      this.client = createClient({
+        url: 'redis://redis:6379',
+        password: process.env.REDIS_PASSWORD,
+      });
+    } else {
       this.client = createClient({
         url: 'redis://redis:6379',
       });
     }
-    this.client = createClient();
+
     this.expirationDefault = 86400000;
   }
 
