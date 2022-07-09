@@ -6,7 +6,7 @@ import { Command } from '../types/Command';
 export const E2: Command = {
   data: new SlashCommandBuilder()
     .setName('e2')
-    .setDescription('Replies with your input!')
+    .setDescription('Get the e2 art of an operator.')
     .addStringOption(option =>
       option.setName('name').setDescription('Rhodes Island Operator').setRequired(true)
     ),

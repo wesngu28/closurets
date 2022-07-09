@@ -18,11 +18,15 @@ dotenv.config();
 export const live: Command = {
   data: new SlashCommandBuilder()
     .setName('live')
-    .setDescription('Name for vtuber, must be in Holodex.')
+    .setDescription(
+      'Check the live status of a youtuber and get a nice embed if they are live, and if they are holodex tracked and not live, get their upcoming stream.'
+    )
     .addStringOption(option =>
       option
         .setName('name')
-        .setDescription('Please provide either first/last or full name for a vtuber in holodex.')
+        .setDescription(
+          'Please provide a youtube channel (full link), or the first/last/full name of a Holodex streamer.'
+        )
         .setRequired(true)
     ),
   async execute(interaction: Interaction) {

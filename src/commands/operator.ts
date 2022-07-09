@@ -23,7 +23,7 @@ export const operator: Command = {
         name = name!.replaceAll(' ', '-');
         const data: Operator | { error: 'Operator not found' } = await getOperatorData(name);
         if (Object.keys(data).includes('error')) {
-          deleteAndFollowUp(interaction, 'Something went wrong with the operator you specified.');
+          deleteAndFollowUp(interaction, 'You provided an incorrect operator name.');
         } else {
           const imgList: { [key: string]: string } = (data as Operator).art;
           const buttons = assembleButtons(imgList);
