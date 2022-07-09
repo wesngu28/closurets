@@ -21,7 +21,7 @@ async function getStreamers() {
       {
         method: 'GET',
         headers: {
-          'x-api-key': 'b72e01f7-0b1e-4bf3-862d-04687142608f',
+          'x-api-key': process.env.HOLODEX_API!,
         },
       }
     );
