@@ -21,7 +21,10 @@ export const ready: DiscordEvent = {
               if (channel) {
                 if (channel.isText()) {
                   if (data) {
-                    channel.send(data);
+                    channel.send({
+                      content: `@everyone ${data.content}`,
+                      embeds: data.embeds,
+                    });
                   }
                 }
               }

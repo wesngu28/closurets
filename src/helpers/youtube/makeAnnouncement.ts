@@ -97,7 +97,7 @@ export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmb
     .setImage(embedResponse.image) // #avatar > # img
     .setTimestamp();
   return {
-    content: `@everyone ${embedResponse.name} is live at https://www.youtube.com/watch?v=${id}`,
+    content: `${embedResponse.name} is live at https://www.youtube.com/watch?v=${id}`,
     embeds: [announcementEmbed],
     publishedDate: `${embedResponse.publishedAt}`,
   };
