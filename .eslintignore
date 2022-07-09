@@ -1,2 +1,2 @@
-lib/holodex/getStreamers.ts
+src/util/getStreamers.ts
 dist/
