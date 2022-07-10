@@ -18,9 +18,7 @@ dotenv.config();
 export const live: Command = {
   data: new SlashCommandBuilder()
     .setName('live')
-    .setDescription(
-      'Check the live status of a youtuber and get a nice embed if they are live, and if they are holodex tracked and not live, get their upcoming stream.'
-    )
+    .setDescription('Check the live status of a youtuber and get a nice embed if they are live.')
     .addStringOption(option =>
       option
         .setName('name')
@@ -34,14 +32,14 @@ export const live: Command = {
       if (interaction.isCommand()) {
         await interaction.deferReply();
         const name = interaction.options.getString('name');
-        const checkID = name?.replace('https://www.youtube.com/channel/', '');
-        const searchRegex = new RegExp(
-          checkID!
-            .toLowerCase()
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ')
-        );
+        let checkID = name
+          ?.replace('https://www.youtube.com/channel/', '')
+          .toLowerCase()
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        if (checkID === 'Irys') checkID = 'IRyS';
+        const searchRegex = new RegExp(checkID!);
         const match = await channelModel
           .find({
             $or: [{ name: searchRegex }, { english_name: searchRegex }, { id: searchRegex }],
@@ -74,7 +72,7 @@ export const live: Command = {
               await interaction.editReply({
                 content: announcementEmbed.content.replace(
                   'is live at',
-                  `will live soon in ${timeUntil(video.available_at)}`
+                  `will be live soon in ${timeUntil(video.available_at)}`
                 ),
                 embeds: announcementEmbed.embeds,
               });
