@@ -1,0 +1,135 @@
+<html lang="en">
+<head>
+  <link rel="stylesheet" type="text/css" href="dist/frontend/styles.css">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <title>Closure</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <p>Closure</p>
+      <a id="user" href="https://github.com/wesngu28/closurets"><img id="github" src="frontend/public/github.png"></a>
+    </nav>
+  </header>
+  <div id="home">
+    <a href="https://www.pixiv.net/en/artworks/80143041"><img id="closure" src="frontend/public/closure.jpg"></a>
+    <p>	What can I get for you, Doc?</p>
+    <h2>Closure - a Discord Bot for Arknights and Youtube</h2>
+    <button id="link">Invite</button>
+    <section>
+      <h2>Features and Commands</h2>
+      <div class="information">
+        <div class="text">
+          <div>
+            <h3>W E L C O M E &nbsp => &nbsp /welcome</h3>
+            <p>Welcome new members with a custom message and image!</p>
+            <ul>
+              <li>Use the welcome command to set your welcome channel.</li>
+              <li>Set a custom image by specifying a url during the slash</li>
+            </ul>
+          </div>
+        </div>
+        <div class="image">
+          <div><img src="frontend/public/Welcome.png"></div>
+        </div>
+      </div>
+      <div class="information">
+        <div class="text">
+          <div>
+            <h3>O P E R A T O R S &nbsp => &nbsp /operator</h3>
+            <p>Get quick information about an Arknights operator!</p>
+            <ul>
+              <li>Use the operators command.</li>
+              <li>Clickable art buttons to show their artwork.</li>
+              <li>Make use of the RhodesAPI (may suffer from cold starts).</li>
+            </ul>
+          </div>
+        </div>
+        <div class="image">
+          <div>
+            <img class="opSlide" src="frontend/public/Operator.png">
+            <img class="opSlide" src="frontend/public/operatorSkin.png">
+          </div>
+        </div>
+      </div>
+      <div class="information">
+        <div class="text">
+          <div>
+            <h3>L I V E  &nbsp => &nbsp /live</h3>
+            <p>Get the live status of any Youtuber!</p>
+            <ul>
+              <li>Use the live command with a youtube link.</li>
+              <li>Try and enter a first/last/full name of a holodex vtuber!</li>
+              <li>Get information about their next scheduled stream!</li>
+            </ul>
+          </div>
+        </div>
+        <div class="image">
+          <div>
+            <img class="liveSlide" src="frontend/public/live.png">
+            <img class="liveSlide" src="frontend/public/upcoming.png">
+          </div>
+        </div>
+      </div>
+      <div class="information">
+        <div class="text">
+          <div>
+            <h3>T R A C K I N G &nbsp => &nbsp /tracker</h3>
+            <p>Track the activity of a Youtube Channel.</p>
+            <ul>
+              <li>Set the announcement location with the command.</li>
+              <li>Announce both streams and uploads.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="image">
+          <div>
+            <img class="trackSlide" src="frontend/public/Tracker.png">
+            <img class="trackSlide" src="frontend/public/upload.png">
+          </div>
+        </div>
+      </div>
+    </section>
+    <section>
+      <div>
+        <h2>Self-Hosting</h2>
+        <p id="host">If you do not want to invite the bot, you can self-host it on your own machine.</p>
+        <div class="information">
+          <div class="text">
+            <div>
+              <h2>Node</h2>
+              <ol>
+                <li>If you do not have Node.js already installed, install it.</li>
+                <li>Visit the GitHub repo and clone the repository to your machine.</li>
+                <li>Navigate to the location you cloned in the terminal and type npm install.</li>
+                <li>Run npm run start if you are on Mac or Linux and npm run startwin if you are on Windows.</li>
+              </ol>
+            </div>
+          </div>
+          <div class="text">
+            <div>
+              <h2>Docker</h2>
+              <ol>
+                <li>If you do not have Docker already installed, visit <a href="https://docs.docker.com/get-docker/">this url</a> and download it for your OS.</li>
+                <li>If you have Bash you can use the shell commands, otherwise, build the production image by running:
+                <p>docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d<</p></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer>
+    <nav>
+      <p>Built using the Discord.js library</p>
+    </nav>
+  </footer>
+<script src = "dist/frontend/scripts.js"></script>
+</body>
+</html>

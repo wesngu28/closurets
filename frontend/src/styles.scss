@@ -1,0 +1,149 @@
+:root {
+  p {
+    margin: 0;
+  }
+}
+
+@mixin container($justify: center, $alignment: center, $direction: row) {
+  display: flex;
+  justify-content: $justify;
+  align-items: $alignment;
+  flex-direction: $direction
+}
+
+// variables
+$color: wheat;
+$main-padding-x: 2rem;
+$main-padding-y: 1.25rem;
+
+@mixin ers($position) {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: $color;
+  position: $position;
+  nav {
+    @include container(space-between);
+    width: 50%;
+    position: sticky;
+    background-color: $color;
+  }
+}
+
+body {
+  @include container($direction: column);
+  font-family: Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1e1e1e;
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none; /* for Firefox */
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+  }
+}
+
+footer, #playlist_info, nav, nav > div, header {
+  display: flex;
+}
+
+header{
+  @include ers(absolute);
+  top: 0;
+  #github {
+    height: 5vh;
+  }
+}
+
+footer {
+  @include ers(sticky);
+  margin-top: 0.5rem;
+  bottom: 0;
+  height: 5vh;
+}
+
+#home {
+  padding: 0 $main-padding-x $main-padding-y $main-padding-x;
+  @include container($direction: column);
+  flex-wrap: wrap;
+  min-height: 75vh;
+  color: #d4d4d4;
+  section {
+    margin-top: 3.5rem;
+    h2 {
+      text-align: center;
+    }
+  }
+  #closure {
+    margin-top: 4.5rem;
+    max-width: 25vw;
+    min-width: 10vw;
+  }
+  @media only screen and (orientation: portrait) {
+    h1 {
+      font-size: 4vw;
+    }
+  }
+}
+
+.information {
+  @include container();
+  margin-top: 1.5rem;
+  div {
+    padding: 1.0vw
+  }
+  .text {
+    @include container(flex-start);
+    width: 25vw;
+    @media only screen and (orientation: portrait) {
+      width: 100vw;
+      @include container();
+      flex-wrap: wrap;
+    }
+  }
+  .image {
+    width: max-content;
+    @include container(flex-start);
+    margin: 0 auto;
+    img{
+      max-width: 100%;
+      min-width: 50vh;
+    }
+    @media only screen and (orientation: portrait) {
+      width: 50vw;
+      img{
+        max-width: 100%;
+        min-width: 25vh;
+      }
+    }
+  }
+  @media only screen and (orientation: portrait) {
+    display: block;
+  }
+}
+
+button {
+  background-color: #2D7D46;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 16px;
+  transition-duration: 0.4s;
+  :hover {
+    background-color: #215B32;
+  }
+}
+
+#host {
+  text-align:  center;
+}
+
+.hidden {
+  display: none;
+}
