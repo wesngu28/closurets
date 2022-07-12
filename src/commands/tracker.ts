@@ -1,6 +1,8 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { GuildMember, Interaction } from 'discord.js';
 import mongoose from 'mongoose';
+import fetch from 'node-fetch';
+import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import trackerModel from '../models/trackerModel';
 import { VideoSchema } from '../models/Video';
 import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
@@ -28,6 +30,15 @@ const fillChannelCollection = async (
     newDBVideo.authorID = channelID;
     await guildDB.create(newDBVideo);
   }
+};
+
+const getUploadsPlaylist = async (channelID: string) => {
+  const videoInfo = await fetch(
+    `https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&part=snippet&id=${channelID}&key=${process.env.YTAPI}`
+  );
+  const videoInfojson = await videoInfo.json();
+  const uploadsPlaylist = videoInfojson.items[0].contentDetails.relatedPlaylists.uploads;
+  return uploadsPlaylist;
 };
 
 export const configureTracker: Command = {
@@ -64,40 +75,40 @@ export const configureTracker: Command = {
           });
           return;
         }
+        await interaction.deferReply({ ephemeral: true });
         const id = await getIDFromLink(inputChannel);
         if (id === 'You provided an invalid link') return;
         tracked.ytID = id;
+        tracked.uploadsPlaylist = await getUploadsPlaylist(id);
         await tracked.save();
-        interaction.reply({
+        interaction.editReply({
           content: `Now tracking activity from ${tracked.ytID}`,
-          ephemeral: true,
         });
         const announceable = await fillChannelCollection(interaction.guild!.id, id);
         if (announceable && interaction.channel?.isText()) {
           interaction.channel.send(announceable);
         }
+        return;
       }
+      const inputChannel = interaction.options.getString('channel')!;
+      await interaction.deferReply({ ephemeral: true });
+      const id = await getIDFromLink(inputChannel);
+      if (id === 'You provided an invalid link') return;
       const trackerObject: Tracker = {
         _id: interaction.guild!.id,
         channelID: interaction.channel!.id,
+        ytID: id,
+        uploadsPlaylist: await getUploadsPlaylist(id),
       };
-      const inputChannel = interaction.options.getString('channel')!;
-      const id = await getIDFromLink(inputChannel);
-      if (id === 'You provided an invalid link') return;
-      trackerObject.ytID = id;
       await trackerModel.create(trackerObject);
-      interaction.reply({
+      interaction.editReply({
         content: `Now tracking activity from ${trackerObject.ytID}`,
-        ephemeral: true,
       });
       const announceable = await fillChannelCollection(interaction.guild!.id, id);
       if (announceable && interaction.channel?.isText()) interaction.channel.send(announceable);
     } catch (err) {
       if (interaction.isCommand()) {
-        await interaction.reply({
-          content: 'There was an error while executing this command!',
-          ephemeral: true,
-        });
+        await deleteAndFollowUp(interaction, 'There was an error while executing this command!');
       }
     }
   },
