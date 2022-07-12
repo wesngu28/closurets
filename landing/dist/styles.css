@@ -11,16 +11,12 @@ body {
   margin: 0;
   padding: 0;
   background-color: #1e1e1e;
-  -ms-overflow-style: none; /* for Internet Explorer, Edge */
-  scrollbar-width: none; /* for Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   overflow-y: scroll;
 }
 body::-webkit-scrollbar {
-  display: none; /* for Chrome, Safari, and Opera */
-}
-
-footer, #playlist_info, nav, nav > div, header {
-  display: flex;
+  display: none;
 }
 
 header {
@@ -29,6 +25,7 @@ header {
   justify-content: center;
   background-color: wheat;
   position: absolute;
+  height: 5vh;
   top: 0;
 }
 header nav {
@@ -40,7 +37,7 @@ header nav {
   position: sticky;
   background-color: wheat;
 }
-header #github {
+header img {
   height: 5vh;
 }
 
@@ -50,9 +47,9 @@ footer {
   justify-content: center;
   background-color: wheat;
   position: sticky;
+  height: 5vh;
   margin-top: 0.5rem;
   bottom: 0;
-  height: 5vh;
 }
 footer nav {
   display: flex;
@@ -62,6 +59,9 @@ footer nav {
   width: 50%;
   position: sticky;
   background-color: wheat;
+}
+footer img {
+  height: 5vh;
 }
 
 #home {
@@ -85,10 +85,8 @@ footer nav {
   max-width: 25vw;
   min-width: 10vw;
 }
-@media only screen and (orientation: portrait) {
-  #home h1 {
-    font-size: 4vw;
-  }
+#home h2 {
+  padding: 0 2rem 0 2rem;
 }
 
 .information {
@@ -99,7 +97,7 @@ footer nav {
   margin-top: 1.5rem;
 }
 .information div {
-  padding: 1vw;
+  padding: 0.5vw;
 }
 .information .text {
   display: flex;
@@ -115,11 +113,9 @@ footer nav {
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    flex-wrap: wrap;
   }
 }
 .information .image {
-  width: max-content;
   display: flex;
   justify-content: flex-start;
   align-items: center;

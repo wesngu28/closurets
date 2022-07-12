@@ -22,11 +22,15 @@ $main-padding-y: 1.25rem;
   justify-content: center;
   background-color: $color;
   position: $position;
+  height: 5vh;
   nav {
     @include container(space-between);
     width: 50%;
     position: sticky;
     background-color: $color;
+  }
+  img {
+    height: 5vh;
   }
 }
 
@@ -36,32 +40,23 @@ body {
   margin: 0;
   padding: 0;
   background-color: #1e1e1e;
-  -ms-overflow-style: none; /* for Internet Explorer, Edge */
-  scrollbar-width: none; /* for Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
   overflow-y: scroll;
-
   &::-webkit-scrollbar {
-    display: none; /* for Chrome, Safari, and Opera */
+    display: none;
   }
-}
-
-footer, #playlist_info, nav, nav > div, header {
-  display: flex;
 }
 
 header{
   @include ers(absolute);
   top: 0;
-  #github {
-    height: 5vh;
-  }
 }
 
 footer {
   @include ers(sticky);
   margin-top: 0.5rem;
   bottom: 0;
-  height: 5vh;
 }
 
 #home {
@@ -81,10 +76,8 @@ footer {
     max-width: 25vw;
     min-width: 10vw;
   }
-  @media only screen and (orientation: portrait) {
-    h1 {
-      font-size: 4vw;
-    }
+  h2 {
+    padding: 0 $main-padding-x 0 $main-padding-x;
   }
 }
 
@@ -92,7 +85,7 @@ footer {
   @include container();
   margin-top: 1.5rem;
   div {
-    padding: 1.0vw
+    padding: 0.5vw
   }
   .text {
     @include container(flex-start);
@@ -100,11 +93,9 @@ footer {
     @media only screen and (orientation: portrait) {
       width: 100vw;
       @include container();
-      flex-wrap: wrap;
     }
   }
   .image {
-    width: max-content;
     @include container(flex-start);
     margin: 0 auto;
     img{
