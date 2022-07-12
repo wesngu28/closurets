@@ -12,12 +12,14 @@ services:
       - ./src:/closure/src
     depends_on:
       - redis
+    mem_limit: 2000m
     deploy:
       restart_policy:
-        condition: on-failure
+        condition: always
     command: npm run dev
   redis:
     image: "redis:alpine"
+    mem_limit: 60m
     volumes:
       - redis:/data
 volumes:
