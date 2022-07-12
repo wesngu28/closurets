@@ -10,6 +10,7 @@ const TrackSchema = new mongoose.Schema({
   _id: required,
   channelID: required,
   ytID: required,
+  uploadsPlaylist: required,
 });
 
 export default mongoose.model<Tracker>('Tracker', TrackSchema);

@@ -1,15 +1,17 @@
 import { chromium } from 'playwright-chromium';
+import trackerModel from '../../models/trackerModel';
 
 export const findLatestVideo = async (
   channelID: string
 ): Promise<string | { title: string; link: string }> => {
+  const tracked = await trackerModel.findOne({ ytID: channelID });
   const browser = await chromium.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
   });
   const page = await browser.newPage();
   await page.setViewportSize({ width: 1920, height: 1080 });
-  await page.goto(`https://www.youtube.com/channel/${channelID}/videos`);
+  await page.goto(`https://www.youtube.com/playlist?list=${tracked!.uploadsPlaylist}`);
   await page.waitForSelector('#video-title');
   const latestLink = await page.evaluate(() => {
     const info = document.querySelector('#video-title');
