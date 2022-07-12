@@ -8,10 +8,12 @@ services:
       container_name: closure_prod
       depends_on:
         - redis
+      mem_limit: 2000m
       deploy:
         restart_policy:
-          condition: on-failure
+          condition: always
       command: npm run start
     redis:
       image: "redis:alpine"
+      mem_limit: 60m
       command: redis-server --requirepass ${REDIS_PASSWORD}
