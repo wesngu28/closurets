@@ -8,7 +8,6 @@ import { VideoSchema } from '../models/Video';
 import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
 import { Command } from '../types/Command';
 import { Tracker } from '../types/Tracker';
-import { Video } from '../types/Video';
 import { findLatestVideo } from '../helpers/youtube/findLatestVideo';
 import { getIDFromLink } from '../helpers/youtube/getIDFromLink';
 import { queryLiveStream } from '../helpers/youtube/queryLiveStream';
@@ -25,14 +24,13 @@ const fillChannelCollection = async (
   if (preRunAnnounceableStream) {
     return preRunAnnounceableStream;
   }
-  if (latestVideo !== 'no latest video found') {
-    const newDBVideo = latestVideo as Video;
-    newDBVideo.authorID = channelID;
-    await guildDB.create(newDBVideo);
+  if (latestVideo.link !== 'no latest video found') {
+    latestVideo.authorID = channelID;
+    await guildDB.create(latestVideo);
   }
 };
 
-const getUploadsPlaylist = async (channelID: string) => {
+const getUploadsPlaylist = async (channelID: string): Promise<string> => {
   const videoInfo = await fetch(
     `https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&part=snippet&id=${channelID}&key=${process.env.YTAPI}`
   );
@@ -85,8 +83,8 @@ export const configureTracker: Command = {
           content: `Now tracking activity from ${tracked.ytID}`,
         });
         const announceable = await fillChannelCollection(interaction.guild!.id, id);
-        if (announceable && interaction.channel?.isText()) {
-          interaction.channel.send(announceable);
+        if (announceable) {
+          interaction.channel!.send(announceable);
         }
         return;
       }
@@ -105,7 +103,7 @@ export const configureTracker: Command = {
         content: `Now tracking activity from ${trackerObject.ytID}`,
       });
       const announceable = await fillChannelCollection(interaction.guild!.id, id);
-      if (announceable && interaction.channel?.isText()) interaction.channel.send(announceable);
+      if (announceable) interaction.channel!.send(announceable);
     } catch (err) {
       if (interaction.isCommand()) {
         await deleteAndFollowUp(interaction, 'There was an error while executing this command!');
