@@ -1,23 +1,35 @@
 import { TextBasedChannel } from 'discord.js';
-import { Tracker } from '../types/Tracker';
 import { Closure } from '../client/Closure';
 import { fetchLiveStream } from '../helpers/youtube/fetchLiveStream';
 import trackerModel from '../models/trackerModel';
 import { DiscordEvent } from '../types/DiscordEvent';
+import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
 
 async function liveChecker(client: Closure) {
   const allTrackedGuilds = await trackerModel.find();
   if (allTrackedGuilds[0]) {
-    allTrackedGuilds.forEach(async (guild: Tracker) => {
-      const data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate);
-      const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
+    for await (const guild of allTrackedGuilds) {
+      let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate);
       if (data) {
+        const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
         channel.send({
           content: `@everyone ${data.content}`,
           embeds: data.embeds,
         });
       }
-    });
+      data = {} as AnnouncementEmbed;
+    }
+    // allTrackedGuilds.forEach(async (guild: Tracker) => {
+    //   let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate);
+    //   if (data) {
+    //     const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
+    //     channel.send({
+    //       content: `@everyone ${data.content}`,
+    //       embeds: data.embeds,
+    //     });
+    //   }
+    //   data = {} as AnnouncementEmbed;
+    // });
   }
 }
 
