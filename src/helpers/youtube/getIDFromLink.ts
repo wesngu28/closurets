@@ -2,7 +2,6 @@ import { parse } from 'node-html-parser';
 import fetch from 'node-fetch';
 
 export const getIDFromLink = async (name: string): Promise<string> => {
-  console.log('Converting a link to a channel id!');
   if (name.startsWith('U') && name.length === 24) return name;
   const validate = /^(https?:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/;
   if (validate.test(name)) {

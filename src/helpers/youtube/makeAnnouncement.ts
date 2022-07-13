@@ -25,7 +25,6 @@ export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmb
       embedInformation.title = videoInformation.title;
       embedInformation.name = videoInformation.channelTitle;
       embedInformation.iconURL = channelInfo.items[0].snippet.thumbnails.default.url;
-      embedInformation.url = channelInfo.items[0].id;
       embedInformation.description = videoInformation.description.slice(0, 200);
       embedInformation.thumbnail = channelInfo.items[0].snippet.thumbnails.high.url;
       embedInformation.image = videoInformation.thumbnails.high.url;

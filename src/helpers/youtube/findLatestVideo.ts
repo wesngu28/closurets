@@ -1,9 +1,8 @@
 import { chromium } from 'playwright-chromium';
+import { Video } from '../../types/Video';
 import trackerModel from '../../models/trackerModel';
 
-export const findLatestVideo = async (
-  channelID: string
-): Promise<string | { title: string; link: string }> => {
+export const findLatestVideo = async (channelID: string): Promise<Video> => {
   const tracked = await trackerModel.findOne({ ytID: channelID });
   const browser = await chromium.launch({
     headless: true,
@@ -26,5 +25,5 @@ export const findLatestVideo = async (
     return { title: latestTitle, link: latestLink };
   }
   await browser.close();
-  return latestLink;
+  return { title: 'no latest video', link: latestLink };
 };

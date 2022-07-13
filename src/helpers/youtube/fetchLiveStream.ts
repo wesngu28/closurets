@@ -18,7 +18,7 @@ export const fetchLiveStream = async (
       return announceableStream;
     }
     const afterLaunchLatestVideo = await findLatestVideo(channelID);
-    if (afterLaunchLatestVideo !== 'no latest video') {
+    if (afterLaunchLatestVideo.title !== 'no latest video') {
       const newVideo = afterLaunchLatestVideo as Video;
       const latestID = newVideo.link.replace('https://www.youtube.com/watch?v=', '');
       const checkChannelVideos = await guildDB.findOne({ title: newVideo.title });
