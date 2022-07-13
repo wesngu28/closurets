@@ -1,15 +1,9 @@
-import { chromium } from 'playwright-chromium';
+import { Page } from 'playwright-chromium';
 import { Video } from '../../types/Video';
 import trackerModel from '../../models/trackerModel';
 
-export const findLatestVideo = async (channelID: string): Promise<Video> => {
+export const findLatestVideo = async (channelID: string, page: Page): Promise<Video> => {
   const tracked = await trackerModel.findOne({ ytID: channelID });
-  const browser = await chromium.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
-  });
-  const page = await browser.newPage();
-  await page.setViewportSize({ width: 1920, height: 1080 });
   await page.goto(`https://www.youtube.com/playlist?list=${tracked!.uploadsPlaylist}`);
   await page.waitForSelector('#video-title');
   const latestLink = await page.evaluate(() => {
@@ -21,9 +15,7 @@ export const findLatestVideo = async (channelID: string): Promise<Video> => {
       const info = document.querySelector('#video-title')?.textContent!;
       return info;
     });
-    await browser.close();
     return { title: latestTitle, link: latestLink };
   }
-  await browser.close();
   return { title: 'no latest video', link: latestLink };
 };

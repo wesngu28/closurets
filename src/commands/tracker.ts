@@ -2,6 +2,9 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { GuildMember, Interaction } from 'discord.js';
 import mongoose from 'mongoose';
 import fetch from 'node-fetch';
+import { chromium } from 'playwright-chromium';
+import { findCanonical } from '../helpers/youtube/findCanonical';
+import { infoStringExamine } from '../helpers/youtube/infoStringExamine';
 import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import trackerModel from '../models/trackerModel';
 import { VideoSchema } from '../models/Video';
@@ -17,16 +20,32 @@ const fillChannelCollection = async (
   guildID: string,
   channelID: string
 ): Promise<void | AnnouncementEmbed> => {
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
+  });
+  const context = await browser.newContext();
   const guildDB = mongoose.model(`${guildID}`, VideoSchema);
   await guildDB.deleteMany({ authorID: { $ne: channelID } });
-  const latestVideo = await findLatestVideo(channelID);
-  const preRunAnnounceableStream = await queryLiveStream(guildDB, channelID);
+  const latestVideoPage = await context.newPage();
+  const latestVideo = await findLatestVideo(channelID, latestVideoPage);
+  const liveLink = await findCanonical(channelID);
+  const examineStringsPage = await context.newPage();
+  const ytInfoString = await infoStringExamine(liveLink!, examineStringsPage);
+  const preRunAnnounceableStream = await queryLiveStream(
+    guildDB,
+    channelID,
+    liveLink!,
+    ytInfoString!
+  );
   if (preRunAnnounceableStream) {
+    await browser.close();
     return preRunAnnounceableStream;
   }
   if (latestVideo.link !== 'no latest video found') {
     latestVideo.authorID = channelID;
     await guildDB.create(latestVideo);
+    await browser.close();
   }
 };
 

@@ -3,6 +3,7 @@ import { Interaction } from 'discord.js';
 import parse from 'node-html-parser';
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
+import { chromium } from 'playwright-chromium';
 import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import channelModel from '../models/channelModel';
 import { Command } from '../types/Command';
@@ -28,6 +29,11 @@ export const live: Command = {
         .setRequired(true)
     ),
   async execute(interaction: Interaction) {
+    const browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
+    });
+    const context = await browser.newContext();
     try {
       if (interaction.isCommand()) {
         await interaction.deferReply();
@@ -56,11 +62,13 @@ export const live: Command = {
                 `https://holodex.net/api/v2/videos/${video.id}`
               );
               const livestreamJson: holoVideo = (await responseLivestream.json()) as holoVideo;
-              const announcementEmbed = await makeAnnouncement(livestreamJson.id);
+              const announcementPage = await context.newPage();
+              const announcementEmbed = await makeAnnouncement(livestreamJson.id, announcementPage);
               await interaction.editReply({
                 content: announcementEmbed.content,
                 embeds: announcementEmbed.embeds,
               });
+              await browser.close();
               return;
             }
             if (video.status === 'upcoming') {
@@ -68,7 +76,8 @@ export const live: Command = {
                 `https://holodex.net/api/v2/videos/${video.id}`
               );
               const livestreamJson: holoVideo = (await responseLivestream.json()) as holoVideo;
-              const announcementEmbed = await makeAnnouncement(livestreamJson.id);
+              const announcementPage = await context.newPage();
+              const announcementEmbed = await makeAnnouncement(livestreamJson.id, announcementPage);
               await interaction.editReply({
                 content: announcementEmbed.content.replace(
                   'is live at',
@@ -76,20 +85,25 @@ export const live: Command = {
                 ),
                 embeds: announcementEmbed.embeds,
               });
+              await browser.close();
               return;
             }
+            await browser.close();
           }
           if (liveJson.length === 0) {
             deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
+            await browser.close();
           }
         } else {
           const otherChannelID = await getIDFromLink(interaction.options.getString('name')!);
           if (otherChannelID === 'You provided an invalid link') {
             deleteAndFollowUp(interaction, 'You provided an invalid field!');
+            await browser.close();
             return;
           }
           if (otherChannelID.includes('shorts')) {
             deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
+            await browser.close();
           } else {
             const response = await fetch(`https://youtube.com/channel/${otherChannelID}/live`);
             const text = await response.text();
@@ -97,7 +111,8 @@ export const live: Command = {
             const canonicalURLTag = html.querySelector('link[rel=canonical]');
             let canonicalURL = canonicalURLTag!.getAttribute('href')!;
             if (canonicalURL.includes('/watch?v=')) {
-              const ytInfoString = await infoStringExamine(canonicalURL);
+              const examineStringsPage = await context.newPage();
+              const ytInfoString = await infoStringExamine(canonicalURL, examineStringsPage);
               if (ytInfoString!.includes('Started')) {
                 const cutString = 'https://www.youtube.com/watch?v=';
                 const queryIndex = canonicalURL.indexOf('https://www.youtube.com/watch?v=');
@@ -105,16 +120,20 @@ export const live: Command = {
                   canonicalURL.substring(queryIndex, cutString.length),
                   ''
                 );
-                const announcementEmbed = await makeAnnouncement(canonicalURL);
+                const announcementPage = await context.newPage();
+                const announcementEmbed = await makeAnnouncement(canonicalURL, announcementPage);
                 await interaction.editReply({
                   content: announcementEmbed.content,
                   embeds: announcementEmbed.embeds,
                 });
+                await browser.close();
               } else {
                 deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
+                await browser.close();
               }
             } else {
               deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
+              await browser.close();
             }
           }
         }
@@ -125,6 +144,7 @@ export const live: Command = {
           interaction,
           `There was an error (${err.message}) while executing this command!`
         );
+        await browser.close();
       }
     }
   },

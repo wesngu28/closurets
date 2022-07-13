@@ -1,12 +1,15 @@
 import { MessageEmbed } from 'discord.js';
 import { parse } from 'node-html-parser';
 import fetch from 'node-fetch';
-import { chromium } from 'playwright-chromium';
+import { chromium, Page } from 'playwright-chromium';
 import { getOrSetToCache } from '../../models/getOrSetToCache';
 import { AnnouncementEmbed, EmbedInformation } from '../../types/AnnouncementEmbed';
 import { sleep } from '../../util/sleep';
 
-export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmbed> => {
+export const makeAnnouncement = async (
+  videoID: string,
+  page: Page | undefined = undefined
+): Promise<AnnouncementEmbed> => {
   let embedResponse = {} as EmbedInformation;
   let id = videoID;
   id = id.replace('yt:video:', '');
@@ -40,13 +43,11 @@ export const makeAnnouncement = async (videoID: string): Promise<AnnouncementEmb
         headless: true,
         args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
       });
-      const page = await browser.newPage();
-      await page.setViewportSize({ width: 1920, height: 1080 });
-      await page.goto(`https://www.youtube.com/watch?v=${id}`);
-      await sleep(100);
-      const scriptTag = await page.$('//*[@id="scriptTag"]');
-      const content = JSON.parse(await page.evaluate(el => el!.innerHTML, scriptTag));
-      const iconURL = await page.evaluate(() => {
+      await (page as Page).goto(`https://www.youtube.com/watch?v=${id}`);
+      await sleep(500);
+      const scriptTag = await (page as Page).$('//*[@id="scriptTag"]');
+      const content = JSON.parse(await (page as Page).evaluate(el => el!.innerHTML, scriptTag));
+      const iconURL = await (page as Page).evaluate(() => {
         const twoSize = [];
         const element = document.querySelector('#avatar > #img');
         twoSize.push((element as HTMLImageElement).src.replace('s48', 's88'));
