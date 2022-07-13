@@ -2,9 +2,8 @@ import { parse } from 'node-html-parser';
 import fetch from 'node-fetch';
 
 export const getIDFromLink = async (name: string): Promise<string> => {
-  if (name.startsWith('U') && name.length === 24) {
-    return name;
-  }
+  console.log('Converting a link to a channel id!');
+  if (name.startsWith('U') && name.length === 24) return name;
   const validate = /^(https?:\/\/)?((www\.)?youtube\.com|youtu\.be)\/.+$/;
   if (validate.test(name)) {
     if (name.includes('/channel/')) {
@@ -15,8 +14,7 @@ export const getIDFromLink = async (name: string): Promise<string> => {
     const response = await fetch(`${name}`);
     const text = await response.text();
     const html = parse(text);
-    const itemProp = html.querySelector('meta[itemprop=channelId]');
-    const channelID = itemProp?.getAttribute('content');
+    const channelID = html.querySelector('meta[itemprop=channelId]')!.getAttribute('content');
     return channelID || 'You provided an invalid link';
   }
   return 'You provided an invalid link';

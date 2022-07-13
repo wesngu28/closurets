@@ -4,7 +4,6 @@ export interface EmbedInformation {
   title: string;
   name: string;
   iconURL: string;
-  url: string;
   description: string;
   thumbnail: string;
   image: string;
