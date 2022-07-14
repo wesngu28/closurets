@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Parser from 'rss-parser';
+import { Page } from 'playwright-chromium';
 import { makeAnnouncement } from './makeAnnouncement';
 import { AnnouncementEmbed } from '../../types/AnnouncementEmbed';
 import { Video } from '../../types/Video';
@@ -10,7 +11,8 @@ export const queryLiveStream = async (
   db: mongoose.Model<Video, {}, {}, {}>,
   channelID: string,
   liveLink: string,
-  ytInfoString: string
+  ytInfoString: string,
+  page: Page
 ): Promise<void | AnnouncementEmbed> => {
   if (ytInfoString?.includes('Started')) {
     const stream = await db.findOne({
@@ -27,7 +29,7 @@ export const queryLiveStream = async (
         ) {
           video.authorID = channelID;
           await db.create(video);
-          const embed = await makeAnnouncement(video.id);
+          const embed = await makeAnnouncement(video.id, page);
           return embed;
         }
       }

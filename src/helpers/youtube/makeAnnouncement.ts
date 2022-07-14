@@ -6,10 +6,7 @@ import { getOrSetToCache } from '../../models/getOrSetToCache';
 import { AnnouncementEmbed, EmbedInformation } from '../../types/AnnouncementEmbed';
 import { sleep } from '../../util/sleep';
 
-export const makeAnnouncement = async (
-  videoID: string,
-  page: Page | undefined = undefined
-): Promise<AnnouncementEmbed> => {
+export const makeAnnouncement = async (videoID: string, page: Page): Promise<AnnouncementEmbed> => {
   let embedResponse = {} as EmbedInformation;
   let id = videoID;
   id = id.replace('yt:video:', '');
