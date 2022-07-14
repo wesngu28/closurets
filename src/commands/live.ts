@@ -96,7 +96,7 @@ export const live: Command = {
           }
         } else {
           const otherChannelID = await getIDFromLink(interaction.options.getString('name')!);
-          if (otherChannelID === 'You provided an invalid link') {
+          if (!otherChannelID) {
             deleteAndFollowUp(interaction, 'You provided an invalid field!');
             await browser.close();
             return;

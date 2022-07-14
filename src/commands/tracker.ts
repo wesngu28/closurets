@@ -32,17 +32,19 @@ const fillChannelCollection = async (
   const liveLink = await findCanonical(channelID);
   const examineStringsPage = await context.newPage();
   const ytInfoString = await infoStringExamine(liveLink!, examineStringsPage);
+  const announcementPage = await context.newPage();
   const preRunAnnounceableStream = await queryLiveStream(
     guildDB,
     channelID,
     liveLink!,
-    ytInfoString!
+    ytInfoString!,
+    announcementPage
   );
   if (preRunAnnounceableStream) {
     await browser.close();
     return preRunAnnounceableStream;
   }
-  if (latestVideo.link !== 'no latest video found') {
+  if (latestVideo) {
     latestVideo.authorID = channelID;
     await guildDB.create(latestVideo);
     await browser.close();
@@ -94,7 +96,7 @@ export const configureTracker: Command = {
         }
         await interaction.deferReply({ ephemeral: true });
         const id = await getIDFromLink(inputChannel);
-        if (id === 'You provided an invalid link') return;
+        if (!id) return;
         tracked.ytID = id;
         tracked.uploadsPlaylist = await getUploadsPlaylist(id);
         await tracked.save();
@@ -110,7 +112,7 @@ export const configureTracker: Command = {
       const inputChannel = interaction.options.getString('channel')!;
       await interaction.deferReply({ ephemeral: true });
       const id = await getIDFromLink(inputChannel);
-      if (id === 'You provided an invalid link') return;
+      if (!id) return;
       const trackerObject: Tracker = {
         _id: interaction.guild!.id,
         channelID: interaction.channel!.id,
