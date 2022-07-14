@@ -1,4 +1,6 @@
 import { TextBasedChannel } from 'discord.js';
+import { chromium } from 'playwright-chromium';
+import { Tracker } from '../types/Tracker';
 import { Closure } from '../client/Closure';
 import { fetchLiveStream } from '../helpers/youtube/fetchLiveStream';
 import trackerModel from '../models/trackerModel';
@@ -8,19 +10,38 @@ import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
 async function liveChecker(client: Closure) {
   const allTrackedGuilds = await trackerModel.find();
   if (allTrackedGuilds[0]) {
-    for await (const guild of allTrackedGuilds) {
-      let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate);
-      if (data) {
-        const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
-        channel.send({
-          content: `@everyone ${data.content}`,
-          embeds: data.embeds,
-        });
-      }
-      data = {} as AnnouncementEmbed;
-    }
+    const browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
+    });
+    console.log(browser.isConnected());
+    const context = await browser.newContext();
+    // for await (const guild of allTrackedGuilds) {
+    //   let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate, context);
+    //   if (data) {
+    //     const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
+    //     channel.send({
+    //       content: `@everyone ${data.content}`,
+    //       embeds: data.embeds,
+    //     });
+    //   }
+    //   data = {} as AnnouncementEmbed;
+    // }
+    await Promise.all(
+      allTrackedGuilds.map(async (guild: Tracker) => {
+        let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate, context);
+        if (data) {
+          const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
+          channel.send({
+            content: `@everyone ${data.content}`,
+            embeds: data.embeds,
+          });
+        }
+        data = {} as AnnouncementEmbed;
+      })
+    );
     // allTrackedGuilds.forEach(async (guild: Tracker) => {
-    //   let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate);
+    //   let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate, context);
     //   if (data) {
     //     const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
     //     channel.send({
@@ -30,6 +51,9 @@ async function liveChecker(client: Closure) {
     //   }
     //   data = {} as AnnouncementEmbed;
     // });
+    console.log('complete all'); // gets loged first
+    await browser.close();
+    console.log(browser.isConnected());
   }
 }
 
