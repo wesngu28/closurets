@@ -14,42 +14,41 @@ export const fetchLiveStream = async (
   channelID: string,
   date: string,
   context: BrowserContext
-): Promise<void | AnnouncementEmbed> => {
-  try {
-    const guildDB = mongoose.model(`${guildID}`, VideoSchema);
-    const liveLink = await findCanonical(channelID);
-    const examineStringsPage = await context.newPage();
-    const ytInfoString = await infoStringExamine(liveLink!, examineStringsPage);
-    const announceableStream = await queryLiveStream(guildDB, channelID, liveLink!, ytInfoString!);
-    if (announceableStream) {
-      await context.close();
-      return announceableStream;
-    }
-    const latestVideoPage = await context.newPage();
-    const afterLaunchLatestVideo = await findLatestVideo(channelID, latestVideoPage);
-    if (afterLaunchLatestVideo.title !== 'no latest video') {
-      const newVideo = afterLaunchLatestVideo as Video;
-      const latestID = newVideo.link.replace('https://www.youtube.com/watch?v=', '');
-      const checkChannelVideos = await guildDB.findOne({ title: newVideo.title });
-      if (checkChannelVideos === null) {
-        const isAnnounceableStream = await makeAnnouncement(latestID);
-        if (isAnnounceableStream.publishedDate < date) {
-          await context.close();
-          return undefined;
-        }
-        newVideo.authorID = channelID;
-        isAnnounceableStream.content = `${
-          isAnnounceableStream.embeds[0].author!.name
-        } has just uploaded ${newVideo.title} ${newVideo.link}`;
-        await guildDB.create(newVideo);
-        await context.close();
-        return isAnnounceableStream;
-      }
-    }
-    await context.close();
-    return undefined;
-  } catch (err: any) {
-    await context.close();
-    return undefined;
+): Promise<null | AnnouncementEmbed> => {
+  const guildDB = mongoose.model(`${guildID}`, VideoSchema);
+  const liveLink = await findCanonical(channelID);
+  const examineStringsPage = await context.newPage();
+  const ytInfoString = await infoStringExamine(liveLink!, examineStringsPage);
+  const announcementPage = await context.newPage();
+  const announceableStream = await queryLiveStream(
+    guildDB,
+    channelID,
+    liveLink!,
+    ytInfoString!,
+    announcementPage
+  );
+  if (announceableStream) {
+    return announceableStream;
   }
+  const latestVideoPage = await context.newPage();
+  const afterLaunchLatestVideo = await findLatestVideo(channelID, latestVideoPage);
+  if (afterLaunchLatestVideo && afterLaunchLatestVideo.title !== 'no latest video') {
+    const { link, title } = afterLaunchLatestVideo as Video;
+    const latestID = link.replace('https://www.youtube.com/watch?v=', '');
+    const checkChannelVideos = await guildDB.findOne({ title });
+    if (checkChannelVideos === null) {
+      const anotherAnnouncementPage = await context.newPage();
+      const isAnnounceableStream = await makeAnnouncement(latestID, anotherAnnouncementPage);
+      if (isAnnounceableStream.publishedDate < date) {
+        return null;
+      }
+      afterLaunchLatestVideo.authorID = channelID;
+      isAnnounceableStream.content = `${
+        isAnnounceableStream.embeds[0].author!.name
+      } has just uploaded ${title} ${link}`;
+      await guildDB.create(afterLaunchLatestVideo);
+      return isAnnounceableStream;
+    }
+  }
+  return null;
 };
