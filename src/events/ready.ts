@@ -16,18 +16,42 @@ async function liveChecker(client: Closure) {
     });
     console.log(browser.isConnected());
     const context = await browser.newContext();
-    allTrackedGuilds.forEach(async (guild: Tracker) => {
-      let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate, context);
-      if (data) {
-        const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
-        channel.send({
-          content: `@everyone ${data.content}`,
-          embeds: data.embeds,
-        });
-      }
-      data = {} as AnnouncementEmbed;
-      await context.close();
-    });
+    // for await (const guild of allTrackedGuilds) {
+    //   let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate, context);
+    //   if (data) {
+    //     const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
+    //     channel.send({
+    //       content: `@everyone ${data.content}`,
+    //       embeds: data.embeds,
+    //     });
+    //   }
+    //   data = {} as AnnouncementEmbed;
+    // }
+    await Promise.all(
+      allTrackedGuilds.map(async (guild: Tracker) => {
+        let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate, context);
+        if (data) {
+          const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
+          channel.send({
+            content: `@everyone ${data.content}`,
+            embeds: data.embeds,
+          });
+        }
+        data = {} as AnnouncementEmbed;
+      })
+    );
+    // allTrackedGuilds.forEach(async (guild: Tracker) => {
+    //   let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate, context);
+    //   if (data) {
+    //     const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
+    //     channel.send({
+    //       content: `@everyone ${data.content}`,
+    //       embeds: data.embeds,
+    //     });
+    //   }
+    //   data = {} as AnnouncementEmbed;
+    // });
+    console.log('complete all'); // gets loged first
     await browser.close();
     console.log(browser.isConnected());
   }
