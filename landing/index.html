@@ -108,6 +108,21 @@
                 <li>If you do not have Node.js already installed, install it.</li>
                 <li>Visit the GitHub repo and clone the repository to your machine.</li>
                 <li>Navigate to the location you cloned in the terminal and type npm install.</li>
+                <li>Fill out the .env_example with the necessary fields, then rename it to .env.</li>
+                <li>On your bot's application page, click OAuth2 and go to url generator.</li>
+                <li>Select the scopes bot and applications.command, and permissions of administrator.</li>
+                <li>Give the permissions: (if these don't work, play around with it or just click administrator)</li>
+                  <ul>
+                    <li>Send messages</li>
+                    <li>Send messages in threads</li>
+                    <li>Manage messages</li>
+                    <li>Embed links</li>
+                    <li>Read message history</li>
+                    <li>Mention everyone</li>
+                    <li>Use slash commands</li>
+                    <li>Read messages/view channels</li>
+                  </ul>
+                <li>Copy the generated url and invite your bot to the server of your choice.</li>
                 <li>Run npm run start if you are on Mac or Linux and npm run startwin if you are on Windows.</li>
               </ol>
             </div>
@@ -116,6 +131,22 @@
             <div>
               <h2>Docker</h2>
               <ol>
+                <li>Visit the GitHub repo and clone the repository to your machine.</li>
+                <li>Fill out the .env_example with the necessary fields, then rename it to .env.</li>
+                <li>On your bot's application page, click OAuth2 and go to url generator.</li>
+                <li>Select the scopes bot and applications.command, and permissions of administrator.</li>
+                <li>Give the permissions: (if these don't work, play around with it or just click administrator)</li>
+                  <ul>
+                    <li>Send messages</li>
+                    <li>Send messages in threads</li>
+                    <li>Manage messages</li>
+                    <li>Embed links</li>
+                    <li>Read message history</li>
+                    <li>Mention everyone</li>
+                    <li>Use slash commands</li>
+                    <li>Read messages/view channels</li>
+                  </ul>
+                <li>Copy the generated url and invite your bot to the server of your choice.</li>
                 <li>If you do not have Docker already installed, visit <a href="https://docs.docker.com/get-docker/">this url</a> and download it for your OS.</li>
                 <li>If you have Bash you can use the shell commands, otherwise, build the production image by running:
                 <p>docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d<</p></li>
