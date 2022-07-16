@@ -6,7 +6,7 @@ export const guildMemberAdd: DiscordEvent = {
   name: 'guildMemberAdd',
   async execute(member: GuildMember): Promise<void> {
     const guilded = await welcomeModel.findOne({ _id: member.guild.id });
-    if (guilded !== null) {
+    if (guilded) {
       const welcomeEmbed = new MessageEmbed()
         .setColor('#0099ff')
         .setTitle('Welcome')

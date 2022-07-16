@@ -1,101 +1,52 @@
 import { MessageEmbed } from 'discord.js';
-import { parse } from 'node-html-parser';
-import fetch from 'node-fetch';
-import { chromium, Page } from 'playwright-chromium';
+import { HolodexVideo } from '../../types/HolodexVideo';
+import { Video } from '../../types/Video';
 import { getOrSetToCache } from '../../models/getOrSetToCache';
 import { AnnouncementEmbed, EmbedInformation } from '../../types/AnnouncementEmbed';
-import { sleep } from '../../util/sleep';
+import { parseHTML, parseJSON } from '../../util/parserSnippets';
 
-export const makeAnnouncement = async (videoID: string, page: Page): Promise<AnnouncementEmbed> => {
-  let embedResponse = {} as EmbedInformation;
-  let id = videoID;
-  id = id.replace('yt:video:', '');
-  if (process.env.YTAPI_USE === 'ALL') {
-    embedResponse = await getOrSetToCache(`announcevideo?=${id}`, async () => {
-      const embedInformation = {} as EmbedInformation;
-      const videoInfo = await fetch(
-        `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${process.env.YTAPI}`
-      );
-      const videoInfojson: any = await videoInfo.json();
-      const videoInformation = videoInfojson.items[0].snippet;
-      const channelPFP = await fetch(
-        `https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${videoInfojson.items[0].snippet.channelId}&key=${process.env.YTAPI}`
-      );
-      const channelInfo: any = await channelPFP.json();
-      embedInformation.title = videoInformation.title;
-      embedInformation.name = videoInformation.channelTitle;
-      embedInformation.iconURL = channelInfo.items[0].snippet.thumbnails.default.url;
-      embedInformation.description = videoInformation.description.slice(0, 200);
-      embedInformation.thumbnail = channelInfo.items[0].snippet.thumbnails.high.url;
-      embedInformation.image = videoInformation.thumbnails.high.url;
-      embedInformation.id = channelInfo.items[0].id;
-      embedInformation.publishedAt = videoInformation.publishedAt;
-      return embedInformation;
-    });
-  }
-  if (process.env.YTAPI_USE === 'MIN') {
-    embedResponse = await getOrSetToCache(`announcevideo?=${id}`, async () => {
-      const embedInformation = {} as EmbedInformation;
-      const browser = await chromium.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
-      });
-      await (page as Page).goto(`https://www.youtube.com/watch?v=${id}`);
-      await sleep(500);
-      const scriptTag = await (page as Page).$('//*[@id="scriptTag"]');
-      const content = JSON.parse(await (page as Page).evaluate(el => el!.innerHTML, scriptTag));
-      const iconURL = await (page as Page).evaluate(() => {
-        const twoSize = [];
-        const element = document.querySelector('#avatar > #img');
-        twoSize.push((element as HTMLImageElement).src.replace('s48', 's88'));
-        twoSize.push((element as HTMLImageElement).src.replace('s48', 's800'));
-        return twoSize;
-      });
-      const [small, large] = iconURL;
-
-      const findChannelID = await fetch(`https://www.youtube.com/watch?v=${id}`);
-      const text = await findChannelID.text();
-      const html = parse(text);
-      const itemProp = html.querySelector('meta[itemprop=channelId]');
-      const channelID = itemProp?.getAttribute('content');
-
-      const hqDefault = content.thumbnailUrl[0].replace('maxresdefault', 'hqdefault');
-
-      embedInformation.title = content.name;
-      embedInformation.name = content.author;
-      embedInformation.iconURL = small;
-      embedInformation.description = content.description.slice(0, 200);
-      embedInformation.thumbnail = large;
-      embedInformation.image = hqDefault;
-      embedInformation.id = channelID!;
-
-      const videoInfo = await fetch(
-        `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id=${id}&key=${process.env.YTAPI}`
-      );
-      const videoInfojson: any = await videoInfo.json();
-      const videoInformation = videoInfojson.items[0].snippet;
-      embedInformation.publishedAt = videoInformation.publishedAt;
-
-      await browser.close();
-      return embedInformation;
-    });
-  }
+export const makeAnnouncement = async ({
+  id,
+  title,
+}: Video | HolodexVideo): Promise<AnnouncementEmbed> => {
+  const embed: EmbedInformation = await getOrSetToCache(`announcevideo?=${id}`, async () => {
+    const videoHTML = await parseHTML(`https://www.youtube.com/watch?v=${id}`);
+    const videoScripts = videoHTML.querySelectorAll('script');
+    const videoJSON = await parseJSON(videoScripts);
+    const { videoSecondaryInfoRenderer } =
+      videoJSON.contents.twoColumnWatchNextResults.results.results.contents[1];
+    const { videoOwnerRenderer: vOR } = videoSecondaryInfoRenderer.owner;
+    const pieceDescriptionTogether = [];
+    if (videoSecondaryInfoRenderer.description) {
+      for (const run of videoSecondaryInfoRenderer.description.runs) {
+        pieceDescriptionTogether.push(run.text);
+      }
+    }
+    return {
+      title,
+      name: vOR.title.runs[0].text,
+      iconURL: vOR.thumbnail.thumbnails[1].url,
+      description: pieceDescriptionTogether.join('').slice(0, 200),
+      thumbnail: vOR.thumbnail.thumbnails[1].url.replace('88', '800'),
+      image: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+      id: vOR.title.runs[0].navigationEndpoint.commandMetadata.webCommandMetadata.url,
+    };
+  });
   const announcementEmbed = new MessageEmbed()
     .setColor('#0099ff')
-    .setTitle(embedResponse.title) // #container > h1 > yt-formatted-string
+    .setTitle(embed.title)
     .setURL(`https://www.youtube.com/watch?v=${id}`)
     .setAuthor({
-      name: embedResponse.name, // #text > a
-      iconURL: embedResponse.iconURL, // #avatar > # img
-      url: `https://www.youtube.com/channel/${embedResponse.id}`, // #meta itemprop
+      name: embed.name,
+      iconURL: embed.iconURL,
+      url: `https://www.youtube.com/channel/${embed.id}`,
     })
-    .setDescription(embedResponse.description) // #content > #description.text()
-    .setThumbnail(embedResponse.thumbnail) // link[itemprop="thumbnailUrl"]
-    .setImage(embedResponse.image) // #avatar > # img
+    .setDescription(embed.description)
+    .setThumbnail(embed.thumbnail)
+    .setImage(embed.image)
     .setTimestamp();
   return {
-    content: `${embedResponse.name} is live at https://www.youtube.com/watch?v=${id}`,
+    content: `${embed.name} is live at https://www.youtube.com/watch?v=${id}`,
     embeds: [announcementEmbed],
-    publishedDate: `${embedResponse.publishedAt}`,
   };
 };

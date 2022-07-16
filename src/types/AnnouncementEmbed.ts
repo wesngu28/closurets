@@ -8,11 +8,9 @@ export interface EmbedInformation {
   thumbnail: string;
   image: string;
   id: string;
-  publishedAt: string;
 }
 
 export interface AnnouncementEmbed {
   content: string;
   embeds: MessageEmbed[];
-  publishedDate: string;
 }

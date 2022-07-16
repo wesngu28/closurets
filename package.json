@@ -22,9 +22,7 @@
     "mongoose": "^6.3.6",
     "node-fetch": "^2.6.7",
     "node-html-parser": "^5.3.3",
-    "playwright-chromium": "^1.23.1",
-    "redis": "^4.2.0",
-    "rss-parser": "^3.12.0"
+    "redis": "^4.2.0"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.30.3",

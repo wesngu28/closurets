@@ -1,4 +1,4 @@
-export interface holoLive {
+export interface HolodexChannel {
   id: string;
   title: string;
   type: string;

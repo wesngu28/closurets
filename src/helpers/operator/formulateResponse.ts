@@ -2,11 +2,21 @@ import { MessageEmbed } from 'discord.js';
 import { Operator } from '../../types/Operator';
 
 export const formulateResponse = (operator: Operator) => {
-  const { name, rarity, url, voicelines, biography, lore, artist, va, quote, art } = operator;
-  const [, class1, class2] = operator.class;
-  const opClass = class2 || class1;
+  const {
+    name,
+    rarity,
+    url,
+    class: [, class1, class2],
+    voicelines,
+    biography,
+    lore,
+    artist,
+    va,
+    quote,
+    art,
+  } = operator;
   const author = {
-    name: `${'★'.repeat(Number(rarity))} ${opClass}`,
+    name: `${'★'.repeat(Number(rarity))} ${class2 || class1}`,
   };
 
   const operatorEmbed = new MessageEmbed()

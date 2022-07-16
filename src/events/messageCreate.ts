@@ -7,7 +7,6 @@ export const messageCreate: DiscordEvent = {
   name: 'messageCreate',
   async execute(message: Message): Promise<void> {
     if (message.author.bot) return;
-
     if (message.content.toLowerCase().includes('arknights')) {
       if (message.member) {
         message.reply(`Dokutah ${message.member.user.username}`);

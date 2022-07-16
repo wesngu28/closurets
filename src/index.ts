@@ -17,9 +17,9 @@ const client = new Closure(
 );
 
 async function buildClient(bot: Closure) {
-  await eventHandler(bot);
   await commandHandler(bot);
   await deployCommands();
+  await eventHandler(bot);
   await RedisClient.init();
   bot.login(process.env.TOKEN);
 }

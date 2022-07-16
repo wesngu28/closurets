@@ -1,4 +1,4 @@
-export interface holoVideo {
+export interface HolodexVideo {
   id: string;
   title: string;
   type: string;

@@ -1,11 +1,10 @@
-FROM mcr.microsoft.com/playwright:focal as development
+FROM node:alpine as development
 
 WORKDIR /closure
 
 COPY package*.json ./
 
 RUN npm install
-RUN npx playwright install
 
 COPY . .
 

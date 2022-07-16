@@ -1,10 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { GuildMember, Interaction } from 'discord.js';
 import mongoose from 'mongoose';
-import fetch from 'node-fetch';
-import { chromium } from 'playwright-chromium';
-import { findCanonical } from '../helpers/youtube/findCanonical';
-import { infoStringExamine } from '../helpers/youtube/infoStringExamine';
+import { makeAnnouncement } from '../helpers/youtube/makeAnnouncement';
 import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import trackerModel from '../models/trackerModel';
 import { VideoSchema } from '../models/Video';
@@ -13,51 +10,23 @@ import { Command } from '../types/Command';
 import { Tracker } from '../types/Tracker';
 import { findLatestVideo } from '../helpers/youtube/findLatestVideo';
 import { getIDFromLink } from '../helpers/youtube/getIDFromLink';
-import { queryLiveStream } from '../helpers/youtube/queryLiveStream';
 
 const fillChannelCollection = async (
-  /* eslint consistent-return: off */
   guildID: string,
   channelID: string
-): Promise<void | AnnouncementEmbed> => {
-  const browser = await chromium.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox, --single-process', '--no-zygote'],
-  });
-  const context = await browser.newContext();
+): Promise<null | AnnouncementEmbed> => {
   const guildDB = mongoose.model(`${guildID}`, VideoSchema);
   await guildDB.deleteMany({ authorID: { $ne: channelID } });
-  const latestVideoPage = await context.newPage();
-  const latestVideo = await findLatestVideo(channelID, latestVideoPage);
-  const liveLink = await findCanonical(channelID);
-  const examineStringsPage = await context.newPage();
-  const ytInfoString = await infoStringExamine(liveLink!, examineStringsPage);
-  const announcementPage = await context.newPage();
-  const preRunAnnounceableStream = await queryLiveStream(
-    guildDB,
-    channelID,
-    liveLink!,
-    ytInfoString!,
-    announcementPage
-  );
-  if (preRunAnnounceableStream) {
-    await browser.close();
-    return preRunAnnounceableStream;
-  }
-  if (latestVideo) {
-    latestVideo.authorID = channelID;
+  const latestVideo = await findLatestVideo(channelID);
+  if (!latestVideo) return null;
+  if (latestVideo.live === true) {
+    const announcement = await makeAnnouncement(latestVideo!);
     await guildDB.create(latestVideo);
-    await browser.close();
+    return announcement;
   }
-};
-
-const getUploadsPlaylist = async (channelID: string): Promise<string> => {
-  const videoInfo = await fetch(
-    `https://youtube.googleapis.com/youtube/v3/channels?part=contentDetails&part=snippet&id=${channelID}&key=${process.env.YTAPI}`
-  );
-  const videoInfojson = await videoInfo.json();
-  const uploadsPlaylist = videoInfojson.items[0].contentDetails.relatedPlaylists.uploads;
-  return uploadsPlaylist;
+  latestVideo.authorID = channelID;
+  await guildDB.create(latestVideo);
+  return null;
 };
 
 export const configureTracker: Command = {
@@ -65,16 +34,11 @@ export const configureTracker: Command = {
     .setName('tracker')
     .setDescription('Configure channel to track and where to post.')
     .addStringOption(option =>
-      option
-        .setName('channel')
-        .setDescription('Channel id (these are in /channel/ urls)')
-        .setRequired(true)
+      option.setName('channel').setDescription('Post a youtube channel link').setRequired(true)
     ),
   async execute(interaction: Interaction) {
     try {
-      if (!interaction.isCommand()) {
-        return;
-      }
+      if (!interaction.isCommand()) return;
       const member = interaction.member as GuildMember;
       if (member!.permissions.has('ADMINISTRATOR') === false) {
         await interaction.reply({
@@ -98,15 +62,12 @@ export const configureTracker: Command = {
         const id = await getIDFromLink(inputChannel);
         if (!id) return;
         tracked.ytID = id;
-        tracked.uploadsPlaylist = await getUploadsPlaylist(id);
         await tracked.save();
         interaction.editReply({
           content: `Now tracking activity from ${tracked.ytID}`,
         });
         const announceable = await fillChannelCollection(interaction.guild!.id, id);
-        if (announceable) {
-          interaction.channel!.send(announceable);
-        }
+        if (announceable) interaction.channel!.send(announceable);
         return;
       }
       const inputChannel = interaction.options.getString('channel')!;
@@ -117,7 +78,6 @@ export const configureTracker: Command = {
         _id: interaction.guild!.id,
         channelID: interaction.channel!.id,
         ytID: id,
-        uploadsPlaylist: await getUploadsPlaylist(id),
       };
       await trackerModel.create(trackerObject);
       interaction.editReply({

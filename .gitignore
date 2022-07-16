@@ -1,6 +1,5 @@
 node_modules/
 .env
-playwright/
 dist/src
 *.txt
 dump.rdb

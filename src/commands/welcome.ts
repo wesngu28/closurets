@@ -11,9 +11,7 @@ export const configureWelcome: Command = {
     .addStringOption(option => option.setName('image').setDescription('Image url for welcomes')),
   async execute(interaction: Interaction) {
     try {
-      if (!interaction.isCommand()) {
-        return;
-      }
+      if (!interaction.isCommand()) return;
       const member = interaction.member as GuildMember;
       if (member!.permissions.has('ADMINISTRATOR') === false) {
         await interaction.reply({
@@ -36,24 +34,23 @@ export const configureWelcome: Command = {
           content: `Welcome configured to ${interaction.channel}. Image set to ${guilded.image}`,
           ephemeral: true,
         });
-      } else {
-        const welcomeObject: Welcome = {
-          _id: interaction.guild!.id,
-          channelID: interaction.channel!.id,
-          image: '',
-        };
-        if (interaction.options.get('image')) {
-          welcomeObject.image = interaction.options.getString('image')!;
-        } else {
-          welcomeObject.image =
-            'https://i.pinimg.com/originals/14/a5/de/14a5de56f19b4635b43f35805e3aa0aa.jpg';
-        }
-        await welcomeModel.create(welcomeObject);
-        interaction.reply({
-          content: `Welcome configured to ${interaction.channel}. Image set to ${welcomeObject.image}`,
-          ephemeral: true,
-        });
+        return;
       }
+      const welcomeObject = {
+        _id: interaction.guild!.id,
+        channelID: interaction.channel!.id,
+      } as Welcome;
+      if (interaction.options.get('image')) {
+        welcomeObject.image = interaction.options.getString('image')!;
+      } else {
+        welcomeObject.image =
+          'https://i.pinimg.com/originals/14/a5/de/14a5de56f19b4635b43f35805e3aa0aa.jpg';
+      }
+      await welcomeModel.create(welcomeObject);
+      interaction.reply({
+        content: `Welcome configured to ${interaction.channel}. Image set to ${welcomeObject.image}`,
+        ephemeral: true,
+      });
     } catch (err) {
       if (interaction.isCommand()) {
         await interaction.reply({

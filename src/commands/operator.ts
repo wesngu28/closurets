@@ -19,8 +19,7 @@ export const operator: Command = {
     try {
       if (interaction.isCommand()) {
         await interaction.deferReply();
-        let name = interaction.options.getString('name');
-        name = name!.replaceAll(' ', '-');
+        const name = interaction.options.getString('name')!.replaceAll(' ', '-');
         const data: Operator | { error: 'Operator not found' } = await getOperatorData(name);
         if (Object.keys(data).includes('error')) {
           deleteAndFollowUp(interaction, 'You provided an incorrect operator name.');
@@ -28,8 +27,7 @@ export const operator: Command = {
           const imgList: { [key: string]: string } = (data as Operator).art;
           const buttons = assembleButtons(imgList);
           const embed = formulateResponse(data as Operator);
-          const timeout = 120000;
-          await skinPaginator(interaction, embed, buttons, imgList, timeout);
+          await skinPaginator(interaction, embed, buttons, imgList, 120000);
         }
       }
     } catch (err) {
