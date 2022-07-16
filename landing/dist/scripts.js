@@ -24,7 +24,7 @@ var carousel = function () {
     }
 };
 carousel();
-var audio = new Audio('landing/public/hoshi_comet.mp3');
+var audio = new Audio('public/hoshi_comet.mp3');
 var musicPlayer = document.querySelector('nav > img');
 musicPlayer === null || musicPlayer === void 0 ? void 0 : musicPlayer.addEventListener('click', function () {
     audio.play();
