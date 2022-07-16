@@ -4,6 +4,7 @@ import { AnnouncementEmbed } from '../../types/AnnouncementEmbed';
 import { makeAnnouncement } from './makeAnnouncement';
 import { findLatestVideo } from './findLatestVideo';
 import { publishedDate } from './publishedDate';
+import { verifyLive } from './verifyLive';
 
 export const fetchLiveStream = async (
   guildID: string,
@@ -15,14 +16,18 @@ export const fetchLiveStream = async (
     const latestVideo = await findLatestVideo(channelID);
     if (!latestVideo) return null;
     if (latestVideo.live === true) {
-      const ensureNoDuplicate = await guildDB.findOne({ title: latestVideo.title });
+      const verification = await verifyLive(channelID);
+      if (!verification || (verification && verification.live === false)) {
+        return null;
+      }
+      const ensureNoDuplicate = await guildDB.findOne({ id: latestVideo.id });
       if (ensureNoDuplicate === null) {
         await guildDB.create(latestVideo);
         const announcement = await makeAnnouncement(latestVideo);
         return announcement;
       }
     }
-    const ensureNoDuplicate = await guildDB.findOne({ title: latestVideo.title });
+    const ensureNoDuplicate = await guildDB.findOne({ id: latestVideo.id });
     if (ensureNoDuplicate === null) {
       const videoUploaded = await makeAnnouncement(latestVideo);
       const publishedAt = await publishedDate(channelID, latestVideo);
