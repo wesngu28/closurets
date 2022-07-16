@@ -30,3 +30,10 @@ const carousel = () => {
 };
 
 carousel();
+
+const audio = new Audio('landing/public/hoshi_comet.mp3');
+const musicPlayer = document.querySelector('nav > img');
+musicPlayer?.addEventListener('click', () => {
+  audio.play();
+  audio.volume = 0.125;
+});
