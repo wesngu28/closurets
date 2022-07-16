@@ -1,5 +1,7 @@
 # Closure - Discord Bot
 
+Visit [here](https://closurets.vercel.app/) for documentation.
+
 > A multifunctional discord bot offering simple utilities and commands like Arknights operator quick information and youtuber live status.
 
 ### Usage
