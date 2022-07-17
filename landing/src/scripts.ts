@@ -34,6 +34,11 @@ carousel();
 const audio = new Audio('public/hoshi_comet.mp3');
 const musicPlayer = document.querySelector('nav > img');
 musicPlayer?.addEventListener('click', () => {
-  audio.play();
-  audio.volume = 0.125;
+  if (audio.paused) {
+    audio.currentTime = 0;
+    audio.play();
+    audio.volume = 0.125;
+    return;
+  }
+  if (!audio.paused) audio.pause();
 });
