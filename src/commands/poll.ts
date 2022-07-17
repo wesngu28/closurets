@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { Interaction, Message, MessageEmbed } from 'discord.js';
+import { GuildMember, Interaction, Message, MessageEmbed } from 'discord.js';
 import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import { Command } from '../types/Command';
 
@@ -19,6 +19,14 @@ export const poll: Command = {
   async execute(interaction: Interaction) {
     try {
       if (!interaction.isCommand()) return;
+      const member = interaction.member as GuildMember;
+      if (member!.permissions.has('ADMINISTRATOR') === false) {
+        await interaction.reply({
+          content: 'You are not able to execute this command!',
+          ephemeral: true,
+        });
+        return;
+      }
       const pollEmbed = new MessageEmbed().setTitle(`📊 ${interaction.options.getString('text')!}`);
       const strings: string[] = interaction.options.getString('options')!.split('|');
       const alphabet = [
@@ -49,6 +57,8 @@ export const poll: Command = {
         '🇾',
         '🇿',
       ];
+      if (strings.length > alphabet.length)
+        interaction.reply({ content: 'You have specified too many options', ephemeral: true });
       const argumentFormatter = [];
       let alphabetChar = 0;
       for (const option of strings) {
