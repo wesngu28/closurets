@@ -2,7 +2,6 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { GuildMember, Interaction } from 'discord.js';
 import mongoose from 'mongoose';
 import { makeAnnouncement } from '../helpers/youtube/makeAnnouncement';
-import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import trackerModel from '../models/trackerModel';
 import { VideoSchema } from '../models/Video';
 import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
