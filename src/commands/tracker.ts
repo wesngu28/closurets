@@ -87,7 +87,7 @@ export const configureTracker: Command = {
       if (announceable) interaction.channel!.send(announceable);
     } catch (err) {
       if (interaction.isCommand()) {
-        await deleteAndFollowUp(interaction, 'There was an error while executing this command!');
+        await interaction.editReply('There was an error while executing this command!');
       }
     }
   },
