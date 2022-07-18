@@ -3,19 +3,25 @@
 }
 
 body {
+  font-family: Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#container {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  font-family: Roboto, sans-serif;
-  margin: 0;
-  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
   background-color: #1e1e1e;
   -ms-overflow-style: none;
   scrollbar-width: none;
   overflow-y: scroll;
 }
-body::-webkit-scrollbar {
+#container::-webkit-scrollbar {
   display: none;
 }
 
@@ -33,7 +39,7 @@ header nav {
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
-  width: 50%;
+  width: 50vw;
   position: sticky;
   background-color: wheat;
 }
@@ -56,7 +62,7 @@ footer nav {
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
-  width: 50%;
+  width: 50vw;
   position: sticky;
   background-color: wheat;
 }
@@ -82,8 +88,21 @@ footer img {
 }
 #home #closure {
   margin-top: 4.5rem;
-  max-width: 25vw;
-  min-width: 10vw;
+}
+@media only screen and (orientation: landscape) {
+  #home #closure {
+    max-width: 25vw;
+  }
+}
+@media only screen and (orientation: portrait) {
+  #home #closure {
+    max-width: 50vw;
+  }
+}
+@media only screen and (max-width: 500px) {
+  #home #closure {
+    max-width: 95vw;
+  }
 }
 #home h2 {
   padding: 0 2rem 0 2rem;
@@ -115,6 +134,16 @@ footer img {
     flex-direction: row;
   }
 }
+.information .text h3, .information .text p {
+  padding: 0 2rem 1.25rem 2rem;
+}
+.information #host {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  min-width: 25vw;
+}
 .information .image {
   display: flex;
   justify-content: flex-start;
@@ -128,11 +157,28 @@ footer img {
 }
 @media only screen and (orientation: portrait) {
   .information .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
     width: 50vw;
   }
   .information .image img {
     max-width: 100%;
-    min-width: 25vh;
+    min-width: 70vw;
+  }
+}
+@media only screen and (max-width: 500px) {
+  .information .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin: 0 auto;
+  }
+  .information .image img {
+    max-width: 100%;
+    min-width: 100vw;
   }
 }
 @media only screen and (orientation: portrait) {
@@ -163,6 +209,16 @@ button :hover {
 
 .hidden {
   display: none;
+}
+
+div > p {
+  padding: 0 2rem 0 2rem;
+}
+
+@media only screen and (max-width: 769px) {
+  #clojure {
+    max-width: 95vw;
+  }
 }
 
 /*# sourceMappingURL=styles.css.map */

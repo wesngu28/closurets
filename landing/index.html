@@ -10,179 +10,177 @@
   <title>Closure</title>
 </head>
 <body>
-  <header>
-    <nav>
-      <p>Closure</p>
-      <img src="public/music.png">
-      <a href="https://github.com/wesngu28/closurets"><img src="public/github.png"></a>
-    </nav>
-  </header>
-  <div id="home">
-    <a href="https://www.pixiv.net/en/artworks/80143041"><img id="closure" src="public/closure.jpg"></a>
-    <p>	What can I get for you, Doc?</p>
-    <h2>Closure - a Discord Bot for Arknights and Youtube</h2>
-    <button id="link">Invite</button>
-    <section>
-      <h2>Features and Commands</h2>
-      <div class="information">
-        <div class="text">
-          <div>
-            <h3>W E L C O M E &nbsp => &nbsp /welcome</h3>
-            <p>Welcome new members with a custom message and image!</p>
-            <ul>
-              <li>Use the welcome command to set your welcome channel.</li>
-              <li>Set a custom image by specifying a url during the slash</li>
-            </ul>
-          </div>
-        </div>
-        <div class="image">
-          <div><img src="public/Welcome.png"></div>
-        </div>
-      </div>
-      <div class="information">
-        <div class="text">
-          <div>
-            <h3>O P E R A T O R S &nbsp => &nbsp /operator</h3>
-            <p>Get quick information about an Arknights operator!</p>
-            <ul>
-              <li>Use the operators command.</li>
-              <li>Clickable art buttons to show their artwork.</li>
-              <li>Make use of the RhodesAPI (may suffer from cold starts).</li>
-            </ul>
-          </div>
-        </div>
-        <div class="image">
-          <div>
-            <img class="opSlide" src="public/Operator.png">
-            <img class="opSlide" src="public/operatorSkin.png">
-          </div>
-        </div>
-      </div>
-      <div class="information">
-        <div class="text">
-          <div>
-            <h3>L I V E  &nbsp => &nbsp /live</h3>
-            <p>Get the live status of any Youtuber!</p>
-            <ul>
-              <li>Use the live command with a youtube link.</li>
-              <li>Try and enter a first/last/full name of a holodex vtuber!</li>
-              <li>Get information about their next scheduled stream!</li>
-            </ul>
-          </div>
-        </div>
-        <div class="image">
-          <div>
-            <img class="liveSlide" src="public/live.png">
-            <img class="liveSlide" src="public/upcoming.png">
-          </div>
-        </div>
-      </div>
-      <div class="information">
-        <div class="text">
-          <div>
-            <h3>T R A C K I N G &nbsp => &nbsp /tracker</h3>
-            <p>Track the activity of a Youtube Channel.</p>
-            <ul>
-              <li>Set the announcement location with the command.</li>
-              <li>Announce both streams and uploads.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="image">
-          <div>
-            <img class="trackSlide" src="public/Tracker.png">
-            <img class="trackSlide" src="public/upload.png">
-          </div>
-        </div>
-      </div>
-      <div class="information">
-        <div class="text">
-          <div>
-            <h3>P O L L &nbsp => &nbsp /poll</h3>
-            <p>Run a simple poll.</p>
-            <ul>
-              <li>Create a simple poll.</li>
-            </ul>
-          </div>
-        </div>
-        <div class="image">
-          <div>
-            <img src="public/poll.png">
-          </div>
-        </div>
-      </div>
-    </section>
-    <section>
-      <div>
-        <h2>Self-Hosting</h2>
-        <p id="host">If you do not want to invite the bot, you can self-host it on your own machine.</p>
+  <div id="container">
+    <header>
+      <nav>
+        <p>Closure</p>
+        <img src="public/music.png">
+        <a href="https://github.com/wesngu28/closurets"><img src="public/github.png"></a>
+      </nav>
+    </header>
+    <div id="home">
+      <a href="https://www.pixiv.net/en/artworks/80143041"><img id="closure" src="public/closure.jpg"></a>
+      <p>	What can I get for you, Doc?</p>
+      <h2>Closure - a Discord Bot for Arknights and Youtube</h2>
+      <button id="link">Invite</button>
+      <section>
+        <h2>Features and Commands</h2>
         <div class="information">
           <div class="text">
             <div>
-              <h2>Node</h2>
-              <ol>
-                <li>If you do not have Node.js already installed, install it.</li>
-                <li>Visit the GitHub repo and clone the repository to your machine.</li>
-                <li>Navigate to the location you cloned in the terminal and type npm install.</li>
-                <li>Fill out the .env_example with the necessary fields, then rename it to .env.</li>
-                <li>On your bot's application page, click OAuth2 and go to url generator.</li>
-                <li>Select the scopes bot and applications.command, and permissions of administrator.</li>
-                <li>Give the permissions: (if these don't work, play around with it or just click administrator)</li>
-                  <ul>
-                    <li>Send messages</li>
-                    <li>Send messages in threads</li>
-                    <li>Manage messages</li>
-                    <li>Embed links</li>
-                    <li>Read message history</li>
-                    <li>Mention everyone</li>
-                    <li>Use slash commands</li>
-                    <li>Read messages/view channels</li>
-                  </ul>
-                <li>Copy the generated url and invite your bot to the server of your choice.</li>
-                <li>Run npm run start if you are on Mac or Linux and npm run startwin if you are on Windows.</li>
-              </ol>
+              <h3>W E L C O M E &nbsp => &nbsp /welcome</h3>
+              <p>Welcome new members with a custom message and image!</p>
+              <ul>
+                <li>Use the welcome command to set your welcome channel.</li>
+                <li>Set a custom image by specifying a url during the slash</li>
+              </ul>
             </div>
           </div>
+          <div class="image">
+            <div><img src="public/Welcome.png"></div>
+          </div>
+        </div>
+        <div class="information">
           <div class="text">
             <div>
-              <h2>Docker</h2>
-              <ol>
-                <li>Visit the GitHub repo and clone the repository to your machine.</li>
-                <li>Fill out the .env_example with the necessary fields, then rename it to .env.</li>
-                <li>On your bot's application page, click OAuth2 and go to url generator.</li>
-                <li>Select the scopes bot and applications.command, and permissions of administrator.</li>
-                <li>Give the permissions: (if these don't work, play around with it or just click administrator)</li>
-                  <ul>
-                    <li>Send messages</li>
-                    <li>Send messages in threads</li>
-                    <li>Manage messages</li>
-                    <li>Embed links</li>
-                    <li>Read message history</li>
-                    <li>Mention everyone</li>
-                    <li>Use slash commands</li>
-                    <li>Read messages/view channels</li>
-                  </ul>
-                <li>Copy the generated url and invite your bot to the server of your choice.</li>
-                <li>If you do not have Docker already installed, visit <a href="https://docs.docker.com/get-docker/">this url</a> and download it for your OS.</li>
-                <li>If you have Bash you can use the shell commands, otherwise, build the production image by running:
-                <p>docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d</p></li>
-              </ol>
+              <h3>O P E R A T O R S &nbsp => &nbsp /operator</h3>
+              <p>Get quick information about an Arknights operator!</p>
+              <ul>
+                <li>Use the operators command.</li>
+                <li>Clickable art buttons to show their artwork.</li>
+                <li>Make use of the RhodesAPI (may suffer from cold starts).</li>
+              </ul>
+            </div>
+          </div>
+          <div class="image">
+            <div>
+              <img class="opSlide" src="public/Operator.png">
+              <img class="opSlide" src="public/operatorSkin.png">
             </div>
           </div>
         </div>
-      </div>
-    </section>
-    <section>
-      <div>
-        <img src="public/clojure.jpg">
-      </div>
-    </section>
+        <div class="information">
+          <div class="text">
+            <div>
+              <h3>L I V E  &nbsp => &nbsp /live</h3>
+              <p>Get the live status of any Youtuber!</p>
+              <ul>
+                <li>Use the live command with a youtube link.</li>
+                <li>Try and enter a first/last/full name of a holodex vtuber!</li>
+                <li>Get information about their next scheduled stream!</li>
+              </ul>
+            </div>
+          </div>
+          <div class="image">
+            <div>
+              <img class="liveSlide" src="public/live.png">
+              <img class="liveSlide" src="public/upcoming.png">
+            </div>
+          </div>
+        </div>
+        <div class="information">
+          <div class="text">
+            <div>
+              <h3>T R A C K I N G &nbsp => &nbsp /tracker</h3>
+              <p>Track the activity of a Youtube Channel.</p>
+              <ul>
+                <li>Set the announcement location with the command.</li>
+                <li>Announce both streams and uploads.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="image">
+            <div>
+              <img class="trackSlide" src="public/Tracker.png">
+              <img class="trackSlide" src="public/upload.png">
+            </div>
+          </div>
+        </div>
+        <div class="information">
+          <div class="text">
+            <div>
+              <h3>P O L L &nbsp => &nbsp /poll</h3>
+              <p>Run a simple poll.</p>
+              <ul>
+                <li>Create a simple poll.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="image">
+            <div>
+              <img src="public/poll.png">
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div>
+          <h2>Self-Hosting</h2>
+          <p id="host">If you do not want to invite the bot, you can self-host it on your own machine.</p>
+          <div class="information">
+            <div class="host">
+              <div>
+                <h2>Node</h2>
+                <ol>
+                  <li>If you do not have Node.js already installed, install it.</li>
+                  <li>Visit the GitHub repo and clone the repository to your machine.</li>
+                  <li>Navigate to the location you cloned in the terminal and type npm install.</li>
+                  <li>Fill out the .env_example with the necessary fields, then rename it to .env.</li>
+                  <li>On your bot's application page, click OAuth2 and go to url generator.</li>
+                  <li>Select the scopes bot and applications.command, and permissions of administrator.</li>
+                  <li>Give the permissions: (if these don't work, play around with it or just click administrator)</li>
+                    <ul>
+                      <li>Send messages</li>
+                      <li>Send messages in threads</li>
+                      <li>Manage messages</li>
+                      <li>Embed links</li>
+                      <li>Read message history</li>
+                      <li>Mention everyone</li>
+                      <li>Use slash commands</li>
+                      <li>Read messages/view channels</li>
+                    </ul>
+                  <li>Copy the generated url and invite your bot to the server of your choice.</li>
+                  <li>Run npm run start if you are on Mac or Linux and npm run startwin if you are on Windows.</li>
+                </ol>
+              </div>
+            </div>
+            <div class="host">
+              <div>
+                <h2>Docker</h2>
+                <ol>
+                  <li>Visit the GitHub repo and clone the repository to your machine.</li>
+                  <li>Fill out the .env_example with the necessary fields, then rename it to .env.</li>
+                  <li>On your bot's application page, click OAuth2 and go to url generator.</li>
+                  <li>Select the scopes bot and applications.command, and permissions of administrator.</li>
+                  <li>Give the permissions: (if these don't work, play around with it or just click administrator)</li>
+                    <ul>
+                      <li>Send messages</li>
+                      <li>Send messages in threads</li>
+                      <li>Manage messages</li>
+                      <li>Embed links</li>
+                      <li>Read message history</li>
+                      <li>Mention everyone</li>
+                      <li>Use slash commands</li>
+                      <li>Read messages/view channels</li>
+                    </ul>
+                  <li>Copy the generated url and invite your bot to the server of your choice.</li>
+                  <li>If you do not have Docker already installed, visit <a href="https://docs.docker.com/get-docker/">this url</a> and download it for your OS.</li>
+                  <li>If you have Bash you can use the shell commands, otherwise, build the production image by running:
+                  <p>docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d</p></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <img id="clojure" src="public/clojure.jpg">
+    <footer>
+      <nav>
+        <p>Built using the Discord.js library</p>
+      </nav>
+    </footer>
   </div>
-  <footer>
-    <nav>
-      <p>Built using the Discord.js library</p>
-    </nav>
-  </footer>
 <script src = "dist/scripts.js"></script>
 </body>
 </html>

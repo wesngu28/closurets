@@ -25,7 +25,7 @@ $main-padding-y: 1.25rem;
   height: 5vh;
   nav {
     @include container(space-between);
-    width: 50%;
+    width: 50vw;
     position: sticky;
     background-color: $color;
   }
@@ -35,10 +35,16 @@ $main-padding-y: 1.25rem;
 }
 
 body {
-  @include container($direction: column);
   font-family: Roboto, sans-serif;
   margin: 0;
   padding: 0;
+}
+
+#container {
+  @include container($direction: column);
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
   background-color: #1e1e1e;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -73,8 +79,15 @@ footer {
   }
   #closure {
     margin-top: 4.5rem;
-    max-width: 25vw;
-    min-width: 10vw;
+    @media only screen and (orientation: landscape) {
+      max-width: 25vw;
+    }
+    @media only screen and (orientation: portrait) {
+      max-width: 50vw;
+    }
+    @media only screen and (max-width: 500px) {
+      max-width: 95vw;
+    }
   }
   h2 {
     padding: 0 $main-padding-x 0 $main-padding-x;
@@ -94,6 +107,13 @@ footer {
       width: 100vw;
       @include container();
     }
+    h3, p {
+      padding: 0 $main-padding-x $main-padding-y $main-padding-x;
+    }
+  }
+  #host {
+    @include container(flex-start);
+    min-width: 25vw;
   }
   .image {
     @include container(flex-start);
@@ -103,10 +123,19 @@ footer {
       min-width: 50vh;
     }
     @media only screen and (orientation: portrait) {
+      @include container();
       width: 50vw;
       img{
         max-width: 100%;
-        min-width: 25vh;
+        min-width: 70vw;
+      }
+    }
+    @media only screen and (max-width: 500px) {
+      @include container();
+      margin: 0 auto;
+      img{
+        max-width: 100%;
+        min-width: 100vw;
       }
     }
   }
@@ -137,4 +166,14 @@ button {
 
 .hidden {
   display: none;
+}
+
+div > p {
+  padding: 0 $main-padding-x 0 $main-padding-x;
+}
+
+#clojure {
+  @media only screen and (max-width: 769px) {
+    max-width: 95vw;
+  }
 }
