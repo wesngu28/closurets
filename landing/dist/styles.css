@@ -135,7 +135,7 @@ footer img {
   }
 }
 .information .text h3, .information .text p {
-  padding: 0 2rem 1.25rem 2rem;
+  padding: 0 2rem 0 2rem;
 }
 .information #host {
   display: flex;

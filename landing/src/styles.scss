@@ -108,7 +108,7 @@ footer {
       @include container();
     }
     h3, p {
-      padding: 0 $main-padding-x $main-padding-y $main-padding-x;
+      padding: 0 $main-padding-x 0 $main-padding-x;
     }
   }
   #host {
