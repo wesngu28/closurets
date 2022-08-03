@@ -31,7 +31,7 @@ export const ready: DiscordEvent = {
     if (!client.user) return;
     if (process.env.NODE_ENV === 'development')
       console.log(`Bot ${client.user.tag} is logged in at ${client.runDate}!`);
-    client.user.setPresence({ activities: [{ name: 'Selling Originite Prime' }] });
+    client.user.setPresence({ activities: [{ name: 'https://closurets.vercel.app/' }] });
     await liveChecker(client);
     setInterval(async () => {
       await liveChecker(client);

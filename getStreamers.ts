@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import ChannelModel from '../models/channelModel';
-import { databaseConnect } from '../models/connect';
-import { Channel } from '../types/Channel';
+import ChannelModel from './src/models/channelModel';
+import { databaseConnect } from './src/models/connect';
+import { Channel } from './src/types/Channel';
 
 dotenv.config();
 
@@ -27,7 +27,7 @@ async function getStreamers() {
     );
     const json: Array<Channel> = (await holoRes.json()) as Array<Channel>;
     if (json[0]) {
-      const findAlreadyExisting = ChannelModel.findOne({
+      const findAlreadyExisting = await ChannelModel.findOne({
         name: json[0].name,
       });
       if (!findAlreadyExisting) {
