@@ -9,9 +9,7 @@ services:
       depends_on:
         - redis
       mem_limit: 2000m
-      deploy:
-        restart_policy:
-          condition: always
+      restart: always
       command: npm run start
     redis:
       image: "redis:alpine"
