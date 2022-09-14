@@ -8,7 +8,7 @@ export const getOperatorData = async (operator: string) => {
     `operator?=${operatorName}`,
     async () => {
       const makeRequest = await fetch(
-        `https://rhodesapi.herokuapp.com/api/rhodes/operator/${operatorName}`
+        `https://rhodesapi.cyclic.app/api/operator/${operatorName}`
       );
       const json: Operator = await makeRequest.json();
       return json;
