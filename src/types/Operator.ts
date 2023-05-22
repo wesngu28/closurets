@@ -1,42 +1,7 @@
-type stats = {
-  hp: string;
-  atk: string;
-  def: string;
-  resist: string;
-  redeploy: string;
-  cost: string;
-  block: string;
-  interval: string;
-};
-
-type skill = {
-  name: string;
-  spcost: string;
-  initialSP: string;
-  chargeType: string;
-  skillActivation: string;
-  skillDescription: string;
-};
-
-type module = {
-  name: string;
-  level: string;
-  trust: string;
-  availability: string;
-  trait: string;
-  missions: string[];
-};
-
-type base = {
-  name: string;
-  level: string;
-  effects: string;
-  building: string;
-};
-
 export type Art = {
   name: string
   link: string
+  line?: string
 }
 
 export interface Operator {
@@ -54,19 +19,45 @@ export interface Operator {
   affiliation: Array<string>;
   class: Array<string>;
   tags: Array<string>;
-  statistics: { base: stats; e0max: stats; e1max: stats; e2max: stats };
+  range: Array<{ elite: string; range: ("attackable" | "unit" | "null")[][] }>;
+  statistics:
+    | { [key: string]: { hp: string; atk: string; def: string; block: string;
+        resist?: string; deploy?: string; cost?: string; interval?: string; } }
+    | {
+        base: { error: string };
+        e0max: { error: string };
+        e1max: { error: string };
+        e2max: { error: string };
+      };
   trait: string;
-  costs: { [key: string]: string };
+  costs: { name: string; amount: number; }[];
   potential: Array<{ name: string; value: string }>;
-  trust: { [key: string]: string };
-  talents: Array<{ name: string; value: string }>;
-  skills: Array<skill>;
-  module: module;
-  base: Array<base>;
+  trust: Array<{ name: string; value: string }>;
+  talents: Array<
+    {name: string, variation: Array<{
+      description: string, elite: string, potential: string, moduleName?: string, moduleLevel?: number
+    }>
+  }>;
+  skills: Array<{
+    name: string;
+    variations: {
+        level: string | number;
+        description: string;
+        sp_cost: string;
+        initial_sp: string;
+        duration: string;
+        range: string | ("attackable" | "unit" | "null")[][];
+    }[];
+    skill_charge: string;
+    skill_activation: string;
+  }>;
+  module: Array<{[key: string]: any;}>;
+  base: Array<{name: string; level: string; effects: string; building: string;}>;
   headhunting: string;
   recruitable: string;
-  art: Array<Art>;
+  art: Array<{name: string, link: string, line?: string}>;
   availability: string;
+  release_dates: { cn: string; global: string;}
   url: string;
   dateAdded?: Date;
 }

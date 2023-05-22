@@ -34,7 +34,7 @@ export const fetchLiveStream = async (
       if (publishedAt && publishedAt < date) {
         return null;
       }
-      videoUploaded.content = `${videoUploaded.embeds[0].author!.name} has just uploaded ${
+      videoUploaded.content = `${videoUploaded.embeds[0].data.author!.name} has just uploaded ${
         latestVideo.title
       } ${latestVideo.link}`;
       await guildDB.create(latestVideo);

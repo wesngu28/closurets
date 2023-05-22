@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 
 export interface EmbedInformation {
   title: string;
@@ -12,5 +12,5 @@ export interface EmbedInformation {
 
 export interface AnnouncementEmbed {
   content: string;
-  embeds: MessageEmbed[];
+  embeds: EmbedBuilder[];
 }
