@@ -34,6 +34,11 @@ type base = {
   building: string;
 };
 
+export type Art = {
+  name: string
+  link: string
+}
+
 export interface Operator {
   _id: string;
   name: string;
@@ -60,7 +65,7 @@ export interface Operator {
   base: Array<base>;
   headhunting: string;
   recruitable: string;
-  art: { [key: string]: string };
+  art: Array<Art>;
   availability: string;
   url: string;
   dateAdded?: Date;

@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { parse } from 'node-html-parser';
 import { Video } from '../../types/Video';
 import { parseHTML, parseJSON } from '../../util/parserSnippets';

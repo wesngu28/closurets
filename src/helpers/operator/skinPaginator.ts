@@ -1,21 +1,21 @@
-/* eslint consistent-return: off */
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
   ButtonInteraction,
+  EmbedBuilder,
   Interaction,
   Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed,
 } from 'discord.js';
+import { Art } from 'types/Operator';
 
 export const skinPaginator = async (
   interact: Interaction,
-  embed: MessageEmbed,
-  buttons: MessageButton[],
-  imgList: { [key: string]: string },
+  embed: EmbedBuilder,
+  buttons: ButtonBuilder[],
+  imgList: Array<Art>,
   timeout = 120000
 ): Promise<Message<boolean> | undefined> => {
-  const row = new MessageActionRow().addComponents(buttons);
+  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons);
   if (interact.isCommand()) {
     const buttonHolder = (await interact.editReply({
       embeds: [embed],
@@ -29,7 +29,7 @@ export const skinPaginator = async (
     collector.on('collect', async (button: ButtonInteraction) => {
       await button.deferUpdate();
       await button.editReply({
-        embeds: [embed.setImage(imgList[Object.keys(imgList)[Number(button.customId)]])],
+        embeds: [embed.setImage(imgList[Number(button.customId)].link)],
         components: [row],
       });
       collector.resetTimer();

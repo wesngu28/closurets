@@ -1,7 +1,7 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { GuildMember, Interaction, Message, MessageEmbed } from 'discord.js';
+import { GuildMember, Message, SlashCommandBuilder } from 'discord.js';
 import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
-import { Command } from '../types/Command';
+import { EmbedBuilder } from '@discordjs/builders';
+import { Command } from 'types/Command';
 
 export const poll: Command = {
   data: new SlashCommandBuilder()
@@ -16,19 +16,19 @@ export const poll: Command = {
         .setDescription('Separate each option with a | character, no spaces')
         .setRequired(true)
     ),
-  async execute(interaction: Interaction) {
+  async execute(interaction) {
     try {
       if (!interaction.isCommand()) return;
       const member = interaction.member as GuildMember;
-      if (member!.permissions.has('ADMINISTRATOR') === false) {
+      if (member!.roles.cache.has('ADMINISTRATOR') === false) {
         await interaction.reply({
           content: 'You are not able to execute this command!',
           ephemeral: true,
         });
         return;
       }
-      const pollEmbed = new MessageEmbed().setTitle(`📊 ${interaction.options.getString('text')!}`);
-      const strings: string[] = interaction.options.getString('options')!.split('|');
+      const pollEmbed = new EmbedBuilder().setTitle(`📊 ${interaction.options.get('text')?.value?.toString()!}`);
+      const strings: string[] = interaction.options.get('options')?.value?.toString().split('|')!;
       const alphabet = [
         '🇦',
         '🇧',

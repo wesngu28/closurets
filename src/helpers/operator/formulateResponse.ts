@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { Operator } from '../../types/Operator';
 
 export const formulateResponse = (operator: Operator) => {
@@ -19,32 +19,35 @@ export const formulateResponse = (operator: Operator) => {
     name: `${'★'.repeat(Number(rarity))} ${class2 || class1}`,
   };
 
-  const operatorEmbed = new MessageEmbed()
+  const operatorEmbed = new EmbedBuilder()
     .setColor('#0099ff')
     .setTitle(name)
     .setURL(url)
-    .setDescription(voicelines['Appointed as Assistant'])
+    .setDescription(voicelines.appointed_as_assistant)
     .setAuthor(author)
-    .addField('Biography', biography)
     .addFields(
       {
+        name: 'Biography',
+        value: biography
+      },
+      {
         name: 'Race',
-        value: lore.Race,
+        value: lore.race,
         inline: true,
       },
       {
         name: 'Birth',
-        value: lore['Place of Birth'],
+        value: lore.place_of_birth,
         inline: true,
       },
       {
         name: 'Birthday',
-        value: lore.Birthday,
+        value: lore.birthday,
         inline: true,
       },
       {
         name: 'Height',
-        value: lore.Height,
+        value: lore.height,
         inline: true,
       },
       {
@@ -56,10 +59,13 @@ export const formulateResponse = (operator: Operator) => {
         name: 'JP VA',
         value: va,
         inline: true,
+      },
+      {
+        name: 'Quote',
+        value: quote
       }
     )
-    .addField('Quote', quote)
-    .setImage(art.none)
+    .setImage(art[0].link)
     .setTimestamp();
   return operatorEmbed;
 };

@@ -1,5 +1,4 @@
 import { parse } from 'node-html-parser';
-import fetch from 'node-fetch';
 
 export const getIDFromLink = async (name: string): Promise<string | null> => {
   if (name.startsWith('U') && name.length === 24) return name;

@@ -1,9 +1,10 @@
-import { MessageButton } from 'discord.js';
+import { ButtonBuilder } from '@discordjs/builders';
+import { ButtonStyle } from 'discord.js';
+import { Art } from 'types/Operator';
 
-export const assembleButtons = (imgList: { [key: string]: string }): Array<MessageButton> => {
-  const names = Object.keys(imgList);
-  const buttons = Object.keys(imgList).map((item, index) =>
-    new MessageButton().setCustomId(`${index}`).setLabel(names[index]).setStyle('SECONDARY')
+export const assembleButtons = (imgList: Array<Art>): Array<ButtonBuilder> => {
+  const buttons = imgList.map((item, index) =>
+    new ButtonBuilder().setCustomId(`${index}`).setLabel(item.name).setStyle(ButtonStyle.Secondary)
   );
   return buttons;
 };

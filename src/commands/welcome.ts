@@ -1,5 +1,5 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { GuildMember, Interaction } from 'discord.js';
+
+import { GuildMember, SlashCommandBuilder } from 'discord.js';
 import welcomeModel from '../models/welcomeModel';
 import { Command } from '../types/Command';
 import { Welcome } from '../types/Welcome';
@@ -9,11 +9,11 @@ export const configureWelcome: Command = {
     .setName('welcome')
     .setDescription('Configure welcome channel and image.')
     .addStringOption(option => option.setName('image').setDescription('Image url for welcomes')),
-  async execute(interaction: Interaction) {
+  async execute(interaction) {
     try {
       if (!interaction.isCommand()) return;
       const member = interaction.member as GuildMember;
-      if (member!.permissions.has('ADMINISTRATOR') === false) {
+      if (member!.roles.cache.has('ADMINISTRATOR') === false) {
         await interaction.reply({
           content: 'You are not able to execute this command!',
           ephemeral: true,
@@ -24,7 +24,7 @@ export const configureWelcome: Command = {
       if (guilded) {
         guilded.channelID = interaction.channel!.id;
         if (interaction.options.get('image')) {
-          guilded.image = interaction.options.getString('image')!;
+          guilded.image = interaction.options.get('image')?.value?.toString()!;
         } else {
           guilded.image =
             'https://i.pinimg.com/originals/14/a5/de/14a5de56f19b4635b43f35805e3aa0aa.jpg';
@@ -41,7 +41,7 @@ export const configureWelcome: Command = {
         channelID: interaction.channel!.id,
       } as Welcome;
       if (interaction.options.get('image')) {
-        welcomeObject.image = interaction.options.getString('image')!;
+        welcomeObject.image = interaction.options.get('image')?.value?.toString()!;
       } else {
         welcomeObject.image =
           'https://i.pinimg.com/originals/14/a5/de/14a5de56f19b4635b43f35805e3aa0aa.jpg';
