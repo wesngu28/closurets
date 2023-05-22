@@ -1,4 +1,4 @@
-import { Guild } from 'discord.js';
+import { ChannelType, Guild, PermissionsBitField } from 'discord.js';
 import { DiscordEvent } from '../types/DiscordEvent';
 
 export const guildCreate: DiscordEvent = {
@@ -6,9 +6,9 @@ export const guildCreate: DiscordEvent = {
   async execute(guild: Guild): Promise<void> {
     const findChannel = guild.channels.cache.find(
       channel =>
-        channel.type === 'GUILD_TEXT' && channel.permissionsFor(guild.me!).has('SEND_MESSAGES')
+        channel.type === ChannelType.GuildText && channel.permissionsFor(guild.members.me!).has(PermissionsBitField.Flags.SendMessages)
     );
-    if (findChannel && findChannel.isText()) {
+    if (findChannel && findChannel.type === ChannelType.GuildText) {
       findChannel.send('What can I get for you, Doc?');
     }
   },

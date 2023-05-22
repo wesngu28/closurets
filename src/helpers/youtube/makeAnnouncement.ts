@@ -1,7 +1,7 @@
-import { MessageEmbed } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { HolodexVideo } from '../../types/HolodexVideo';
 import { Video } from '../../types/Video';
-import { getOrSetToCache } from '../../models/getOrSetToCache';
+// import { getOrSetToCache } from '../../models/getOrSetToCache';
 import { AnnouncementEmbed, EmbedInformation } from '../../types/AnnouncementEmbed';
 import { parseHTML, parseJSON } from '../../util/parserSnippets';
 
@@ -9,20 +9,19 @@ export const makeAnnouncement = async ({
   id,
   title,
 }: Video | HolodexVideo): Promise<AnnouncementEmbed> => {
-  const embed: EmbedInformation = await getOrSetToCache(`announcevideo?=${id}`, async () => {
-    const videoHTML = await parseHTML(`https://www.youtube.com/watch?v=${id}`);
-    const videoScripts = videoHTML.querySelectorAll('script');
-    const videoJSON = await parseJSON(videoScripts);
-    const { videoSecondaryInfoRenderer } =
-      videoJSON.contents.twoColumnWatchNextResults.results.results.contents[1];
-    const { videoOwnerRenderer: vOR } = videoSecondaryInfoRenderer.owner;
-    const pieceDescriptionTogether = [];
-    if (videoSecondaryInfoRenderer.description) {
-      for (const run of videoSecondaryInfoRenderer.description.runs) {
-        pieceDescriptionTogether.push(run.text);
-      }
+  const videoHTML = await parseHTML(`https://www.youtube.com/watch?v=${id}`);
+  const videoScripts = videoHTML.querySelectorAll('script');
+  const videoJSON = await parseJSON(videoScripts);
+  const { videoSecondaryInfoRenderer } =
+    videoJSON.contents.twoColumnWatchNextResults.results.results.contents[1];
+  const { videoOwnerRenderer: vOR } = videoSecondaryInfoRenderer.owner;
+  const pieceDescriptionTogether = [];
+  if (videoSecondaryInfoRenderer.description) {
+    for (const run of videoSecondaryInfoRenderer.description.runs) {
+      pieceDescriptionTogether.push(run.text);
     }
-    return {
+  }
+  const embed: EmbedInformation = {
       title,
       name: vOR.title.runs[0].text,
       iconURL: vOR.thumbnail.thumbnails[1].url,
@@ -30,9 +29,8 @@ export const makeAnnouncement = async ({
       thumbnail: vOR.thumbnail.thumbnails[1].url.replace('88', '800'),
       image: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
       id: vOR.title.runs[0].navigationEndpoint.commandMetadata.webCommandMetadata.url,
-    };
-  });
-  const announcementEmbed = new MessageEmbed()
+  };
+  const announcementEmbed = new EmbedBuilder()
     .setColor('#0099ff')
     .setTitle(embed.title)
     .setURL(`https://www.youtube.com/watch?v=${id}`)

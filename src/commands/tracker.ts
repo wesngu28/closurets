@@ -1,14 +1,13 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { GuildMember, Interaction } from 'discord.js';
+import { GuildMember, SlashCommandBuilder } from 'discord.js';
 import mongoose from 'mongoose';
 import { makeAnnouncement } from '../helpers/youtube/makeAnnouncement';
 import trackerModel from '../models/trackerModel';
 import { VideoSchema } from '../models/Video';
 import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
-import { Command } from '../types/Command';
 import { Tracker } from '../types/Tracker';
 import { findLatestVideo } from '../helpers/youtube/findLatestVideo';
 import { getIDFromLink } from '../helpers/youtube/getIDFromLink';
+import { Command } from 'types/Command';
 
 const fillChannelCollection = async (
   guildID: string,
@@ -35,11 +34,11 @@ export const configureTracker: Command = {
     .addStringOption(option =>
       option.setName('channel').setDescription('Post a youtube channel link').setRequired(true)
     ),
-  async execute(interaction: Interaction) {
+  async execute(interaction) {
     try {
       if (!interaction.isCommand()) return;
       const member = interaction.member as GuildMember;
-      if (member!.permissions.has('ADMINISTRATOR') === false) {
+      if (member!.roles.cache.has('ADMINISTRATOR') === false) {
         await interaction.reply({
           content: 'You are not able to execute this command!',
           ephemeral: true,
@@ -49,7 +48,7 @@ export const configureTracker: Command = {
       const tracked = await trackerModel.findOne({ _id: interaction.guild!.id });
       if (tracked) {
         tracked.channelID = interaction.channel!.id;
-        const inputChannel = interaction.options.getString('channel')!;
+        const inputChannel = interaction.options.get('channel')?.value?.toString()!;
         if (inputChannel === tracked.ytID) {
           interaction.reply({
             content: 'You provided an already tracked channel',
@@ -69,7 +68,7 @@ export const configureTracker: Command = {
         if (announceable) interaction.channel!.send(announceable);
         return;
       }
-      const inputChannel = interaction.options.getString('channel')!;
+      const inputChannel = interaction.options.get('channel')?.value?.toString()!;
       await interaction.deferReply({ ephemeral: true });
       const id = await getIDFromLink(inputChannel);
       if (!id) return;
