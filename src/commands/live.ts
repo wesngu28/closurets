@@ -1,16 +1,14 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { Interaction } from 'discord.js';
-import fetch from 'node-fetch';
 import { parseHTML, parseJSON } from '../util/parserSnippets';
 import { Video } from '../types/Video';
 import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import channelModel from '../models/channelModel';
-import { Command } from '../types/Command';
 import { HolodexChannel } from '../types/HolodexChannel';
 import { HolodexVideo } from '../types/HolodexVideo';
 import { timeUntil } from '../util/timeUntil';
 import { makeAnnouncement } from '../helpers/youtube/makeAnnouncement';
 import { getIDFromLink } from '../helpers/youtube/getIDFromLink';
+import { Command } from '../types/Command';
 
 export const live: Command = {
   data: new SlashCommandBuilder()
@@ -24,12 +22,12 @@ export const live: Command = {
         )
         .setRequired(true)
     ),
-  async execute(interaction: Interaction) {
+  async execute(interaction) {
     try {
       if (!interaction.isCommand()) return;
       await interaction.deferReply();
       let capitalizeFirstCharacters = interaction.options
-        .getString('name')
+        .get('name')?.value?.toString()
         ?.replace('https://www.youtube.com/channel/', '')
         .toLowerCase()
         .split(' ')
@@ -42,19 +40,16 @@ export const live: Command = {
       });
       if (match) {
         const responseLive = await fetch(`https://holodex.net/api/v2/live?channel_id=${match.id}`);
-        const liveJson: Array<HolodexChannel> = await responseLive.json();
+        const liveJson = await responseLive.json() as Array<HolodexChannel>;
         for await (const video of liveJson) {
+          const responseLivestream = await fetch(`https://holodex.net/api/v2/videos/${video.id}`);
+          const livestreamJson = await responseLivestream.json() as HolodexVideo;
+          const announcementEmbed = await makeAnnouncement(livestreamJson);
           if (video.status === 'live' && video.live_viewers !== 0) {
-            const responseLivestream = await fetch(`https://holodex.net/api/v2/videos/${video.id}`);
-            const livestreamJson: HolodexVideo = await responseLivestream.json();
-            const announcementEmbed = await makeAnnouncement(livestreamJson);
             await interaction.editReply(announcementEmbed);
             return;
           }
           if (video.status === 'upcoming') {
-            const responseLivestream = await fetch(`https://holodex.net/api/v2/videos/${video.id}`);
-            const livestreamJson: HolodexVideo = await responseLivestream.json();
-            const announcementEmbed = await makeAnnouncement(livestreamJson);
             await interaction.editReply({
               content: announcementEmbed.content.replace(
                 'is live at',
@@ -69,7 +64,7 @@ export const live: Command = {
           deleteAndFollowUp(interaction, 'That channel is not currently streaming!');
         }
       } else {
-        const otherChannelID = await getIDFromLink(interaction.options.getString('name')!);
+        const otherChannelID = await getIDFromLink(interaction.options.get('name')?.value?.toString()!);
         if (!otherChannelID) {
           deleteAndFollowUp(interaction, 'You provided an invalid field!');
           return;
