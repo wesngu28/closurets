@@ -16,7 +16,7 @@ export const operator: Command = {
       option.setName('name').setDescription('Rhodes Island Operator').setRequired(true)
     ),
   async execute(interaction) {
-    // try {
+    try {
       if (interaction.isCommand()) {
         await interaction.deferReply();
         const name = interaction.options.get('name')?.value?.toString()!.replaceAll(' ', '-')!;
@@ -30,10 +30,10 @@ export const operator: Command = {
           await skinPaginator(interaction as Interaction, embed, buttons, imgList, 120000);
         }
       }
-    // } catch (err) {
-    //   if (interaction.isCommand()) {
-    //     deleteAndFollowUp(interaction, 'There was an error while executing this command!');
-    //   }
-    // }
+    } catch (err) {
+      if (interaction.isCommand()) {
+        deleteAndFollowUp(interaction, 'There was an error while executing this command! ' + err);
+      }
+    }
   },
 };
