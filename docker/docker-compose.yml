@@ -10,15 +10,6 @@ services:
     container_name: closure_dev
     volumes:
       - ./src:/closure/src
-    depends_on:
-      - redis
     mem_limit: 2000m
     restart: always
     command: npm run dev
-  redis:
-    image: "redis:alpine"
-    mem_limit: 60m
-    volumes:
-      - redis:/data
-volumes:
-  redis:
