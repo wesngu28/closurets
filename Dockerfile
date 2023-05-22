@@ -15,3 +15,6 @@ COPY tsconfig*.json ./
 RUN npm run build
 
 RUN npm prune --production
+
+# comment this out if selfhosting
+RUN npm run start
