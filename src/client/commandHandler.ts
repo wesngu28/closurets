@@ -20,7 +20,6 @@ export async function commandHandler(client: Closure): Promise<void> {
     const filePath = path.join(commandsPath, file);
     const command = await import(filePath);
     const commandName = Object.keys(command)[0];
-    console.log(command[commandName])
     client.commands.set(command[commandName].data.name, command);
   }
 }
