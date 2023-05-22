@@ -5,8 +5,6 @@ import { databaseConnect } from './models/connect';
 import { eventHandler } from './client/eventHandler';
 import { commandHandler, deployCommands } from './client/commandHandler';
 import { Command } from './types/Command';
-import { RedisClient } from './models/redis';
-
 dotenv.config();
 
 databaseConnect();
@@ -20,7 +18,6 @@ async function buildClient(bot: Closure) {
   await commandHandler(bot);
   await deployCommands();
   await eventHandler(bot);
-  await RedisClient.init();
   bot.login(process.env.TOKEN);
 }
 
