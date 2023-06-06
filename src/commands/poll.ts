@@ -1,4 +1,4 @@
-import { GuildMember, Message, SlashCommandBuilder } from 'discord.js';
+import { GuildMember, Message, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 import { deleteAndFollowUp } from '../helpers/deleteAndFollowUp';
 import { EmbedBuilder } from '@discordjs/builders';
 import { Command } from 'types/Command';
@@ -20,7 +20,7 @@ export const poll: Command = {
     try {
       if (!interaction.isCommand()) return;
       const member = interaction.member as GuildMember;
-      if (member!.roles.cache.has('ADMINISTRATOR') === false) {
+      if (!member.permissions.has(PermissionsBitField.Flags.Administrator)) {
         await interaction.reply({
           content: 'You are not able to execute this command!',
           ephemeral: true,
