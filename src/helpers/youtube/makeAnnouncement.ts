@@ -39,7 +39,7 @@ export const makeAnnouncement = async ({
       iconURL: embed.iconURL,
       url: `https://www.youtube.com/channel/${embed.id}`,
     })
-    .setDescription(embed.description)
+    .setDescription(embed.description ? embed.description : 'No description')
     .setThumbnail(embed.thumbnail)
     .setImage(embed.image)
     .setTimestamp();
