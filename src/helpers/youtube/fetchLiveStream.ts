@@ -14,13 +14,16 @@ export const fetchLiveStream = async (
   try {
     const guildDB = mongoose.model(`${guildID}`, VideoSchema);
     const latestVideo = await findLatestVideo(channelID);
+    console.log(latestVideo + " latest video")
     if (!latestVideo) return null;
     if (latestVideo.live === true) {
       const verification = await verifyLive(channelID);
+      console.log(verification + " verification")
       if (!verification || (verification && verification.live === false)) {
         return null;
       }
       const ensureNoDuplicate = await guildDB.findOne({ id: latestVideo.id });
+      console.log(ensureNoDuplicate + " ensureNoDuplicate")
       if (ensureNoDuplicate === null) {
         await guildDB.create(latestVideo);
         const announcement = await makeAnnouncement(latestVideo);
@@ -28,9 +31,12 @@ export const fetchLiveStream = async (
       }
     }
     const ensureNoDuplicate = await guildDB.findOne({ id: latestVideo.id });
+    console.log(ensureNoDuplicate + " ensureNoDuplicate outside of if")
     if (ensureNoDuplicate === null) {
       const videoUploaded = await makeAnnouncement(latestVideo);
+      console.log(videoUploaded + " videoUploaded")
       const publishedAt = await publishedDate(channelID, latestVideo);
+      console.log(publishedAt + " publishedAt")
       if (publishedAt && publishedAt < date) {
         return null;
       }
@@ -38,10 +44,12 @@ export const fetchLiveStream = async (
         latestVideo.title
       } ${latestVideo.link}`;
       await guildDB.create(latestVideo);
+      console.log(videoUploaded)
       return videoUploaded;
     }
     return null;
   } catch (err: any) {
+    console.log(err)
     return null;
   }
 };
