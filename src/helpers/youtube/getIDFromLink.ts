@@ -12,8 +12,16 @@ export const getIDFromLink = async (name: string): Promise<string | null> => {
     const response = await fetch(`${name}`);
     const text = await response.text();
     const html = parse(text);
-    const channelID = html.querySelector('meta[itemprop=channelId]')!.getAttribute('content');
-    return channelID || null;
+    const scripts = document.querySelectorAll('script')
+    let json = ""
+    scripts.forEach(script => {
+        if (script.textContent.includes('var ytInitialData')) {
+            let fmt = script.textContent.replace('var ytInitialData = ', '').replace(';', '')
+            json = JSON.parse(fmt)
+            console.log()
+        }
+    })
+    if (json) return json.header.c4TabbedHeaderRenderer.channelId || null
   }
   return null;
 };
