@@ -13,12 +13,11 @@ export const getIDFromLink = async (name: string): Promise<string | null> => {
     const text = await response.text();
     const html = parse(text);
     const scripts = document.querySelectorAll('script')
-    let json = ""
+    let json: {[key: string]: any} = {}
     scripts.forEach(script => {
-        if (script.textContent.includes('var ytInitialData')) {
+        if (script.textContent && script.textContent.includes('var ytInitialData')) {
             let fmt = script.textContent.replace('var ytInitialData = ', '').replace(';', '')
             json = JSON.parse(fmt)
-            console.log()
         }
     })
     if (json) return json.header.c4TabbedHeaderRenderer.channelId || null
