@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "SET NODE_ENV=development&& nodemon src/index.ts",
-    "dev": "NODE_ENV=development nodemon -L src/index.ts",
+    "dev": "nodemon -L src/index.ts",
     "startwin": "tsc && SET NODE_ENV=production&& node dist/index.js",
     "start": "NODE_ENV=production node dist/src/index.js"
   },
@@ -19,11 +19,12 @@
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
     "mongoose": "^7.2.0",
-    "node-fetch": "^3.3.1",
+    "node-fetch": "^2.6.7",
     "node-html-parser": "^6.1.5",
     "redis": "^4.6.6"
   },
   "devDependencies": {
+    "@types/node-fetch": "^2.6.4",
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "eslint": "^8.41.0",

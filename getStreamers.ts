@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import fetch from 'node-fetch';
 import ChannelModel from './src/models/channelModel';
 import { databaseConnect } from './src/models/connect';
 import { Channel } from './src/types/Channel';

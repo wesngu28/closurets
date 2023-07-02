@@ -84,6 +84,7 @@ export const configureTracker: Command = {
       const announceable = await fillChannelCollection(interaction.guild!.id, id);
       if (announceable) interaction.channel!.send(announceable);
     } catch (err) {
+      console.log(err)
       if (interaction.isCommand()) {
         await interaction.editReply('There was an error while executing this command!');
       }
