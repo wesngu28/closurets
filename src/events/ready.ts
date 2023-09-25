@@ -1,11 +1,11 @@
-import { TextBasedChannel } from 'discord.js';
+import { GuildChannel, TextBasedChannel } from 'discord.js';
 import { Tracker } from '../types/Tracker';
 import { Closure } from '../client/Closure';
 import { fetchLiveStream } from '../helpers/youtube/fetchLiveStream';
 import trackerModel from '../models/trackerModel';
 import { DiscordEvent } from '../types/DiscordEvent';
 import { AnnouncementEmbed } from '../types/AnnouncementEmbed';
-import { PermissionsBitField  } from 'discord.js';
+import { PermissionsBitField } from 'discord.js';
 
 async function liveChecker(client: Closure) {
   const allTrackedGuilds = await trackerModel.find();
@@ -15,8 +15,14 @@ async function liveChecker(client: Closure) {
         let data = await fetchLiveStream(guild._id, guild.ytID!, client.runDate);
         if (data) {
           const channel = client.channels.cache.get(guild.channelID) as TextBasedChannel;
-          const guilde = client.guilds.cache.get(guild._id)
-          if (guilde && guilde.members.me?.permissions.has(PermissionsBitField.Flags.SendMessages)) {
+          const guilde = client.guilds.cache.get(guild._id);
+          if (
+            guilde &&
+            guilde.members.me?.permissions.has(PermissionsBitField.Flags.SendMessages) &&
+            (channel as GuildChannel)
+              .permissionsFor(guilde.members.me)
+              .has(PermissionsBitField.Flags.SendMessages)
+          ) {
             channel.send({
               content: `@everyone ${data.content}`,
               embeds: data.embeds,
