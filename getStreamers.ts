@@ -30,10 +30,8 @@ async function getStreamers() {
         name: json[0].name,
       });
       if (!findAlreadyExisting) {
-        console.log(`Added ${json[0].english_name}`);
         await ChannelModel.create(json);
       }
-      console.log(`Database already has ${json[0].english_name}`);
     }
   }
 }
